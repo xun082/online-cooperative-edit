@@ -1,9 +1,0 @@
-{
-  "printWidth": 80,
-  "tabWidth": 2,
-  "trailingComma": "all",
-  "semi": true,
-  "endOfLine": "auto",
-  "arrowParens": "avoid",
-  "bracketSpacing": true
-}
