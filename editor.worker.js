@@ -21,7 +21,7 @@ var __webpack_exports__ = {};
 
 // UNUSED EXPORTS: initialize
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/errors.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/errors.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -173,7 +173,7 @@ class BugIndicatingError extends Error {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/functional.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/functional.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -192,7 +192,7 @@ function once(fn) {
     };
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/iterator.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/iterator.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -322,7 +322,7 @@ var Iterable;
     Iterable.consume = consume;
 })(Iterable || (Iterable = {}));
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/lifecycle.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/lifecycle.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -443,6 +443,8 @@ function combinedDisposable(...disposables) {
 }
 /**
  * Turn a function that implements dispose into an {@link IDisposable}.
+ *
+ * @param fn Clean up function, guaranteed to be called only **once**.
  */
 function lifecycle_toDisposable(fn) {
     const self = trackDisposable({
@@ -608,31 +610,6 @@ class RefCountedDisposable {
         return this;
     }
 }
-/**
- * A safe disposable can be `unset` so that a leaked reference (listener)
- * can be cut-off.
- */
-class SafeDisposable {
-    constructor() {
-        this.dispose = () => { };
-        this.unset = () => { };
-        this.isset = () => false;
-        trackDisposable(this);
-    }
-    set(fn) {
-        let callback = fn;
-        this.unset = () => callback = undefined;
-        this.isset = () => callback !== undefined;
-        this.dispose = () => {
-            if (callback) {
-                callback();
-                callback = undefined;
-                markAsDisposed(this);
-            }
-        };
-        return this;
-    }
-}
 class ImmortalReference {
     constructor(object) {
         this.object = object;
@@ -698,7 +675,7 @@ class DisposableMap {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/linkedList.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/linkedList.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -824,363 +801,18 @@ class linkedList_LinkedList {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/nls.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/stopwatch.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-let isPseudo = (typeof document !== 'undefined' && document.location && document.location.hash.indexOf('pseudo=true') >= 0);
-const DEFAULT_TAG = 'i-default';
-function _format(message, args) {
-    let result;
-    if (args.length === 0) {
-        result = message;
-    }
-    else {
-        result = message.replace(/\{(\d+)\}/g, (match, rest) => {
-            const index = rest[0];
-            const arg = args[index];
-            let result = match;
-            if (typeof arg === 'string') {
-                result = arg;
-            }
-            else if (typeof arg === 'number' || typeof arg === 'boolean' || arg === void 0 || arg === null) {
-                result = String(arg);
-            }
-            return result;
-        });
-    }
-    if (isPseudo) {
-        // FF3B and FF3D is the Unicode zenkaku representation for [ and ]
-        result = '\uFF3B' + result.replace(/[aouei]/g, '$&$&') + '\uFF3D';
-    }
-    return result;
-}
-function findLanguageForModule(config, name) {
-    let result = config[name];
-    if (result) {
-        return result;
-    }
-    result = config['*'];
-    if (result) {
-        return result;
-    }
-    return null;
-}
-function endWithSlash(path) {
-    if (path.charAt(path.length - 1) === '/') {
-        return path;
-    }
-    return path + '/';
-}
-function getMessagesFromTranslationsService(translationServiceUrl, language, name) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = endWithSlash(translationServiceUrl) + endWithSlash(language) + 'vscode/' + endWithSlash(name);
-        const res = yield fetch(url);
-        if (res.ok) {
-            const messages = yield res.json();
-            return messages;
-        }
-        throw new Error(`${res.status} - ${res.statusText}`);
-    });
-}
-function createScopedLocalize(scope) {
-    return function (idx, defaultValue) {
-        const restArgs = Array.prototype.slice.call(arguments, 2);
-        return _format(scope[idx], restArgs);
-    };
-}
-function localize(data, message, ...args) {
-    return _format(message, args);
-}
-function getConfiguredDefaultLocale(_) {
-    // This returns undefined because this implementation isn't used and is overwritten by the loader
-    // when loaded.
-    return undefined;
-}
-function setPseudoTranslation(value) {
-    isPseudo = value;
-}
-/**
- * Invoked in a built product at run-time
- */
-function create(key, data) {
-    var _a;
-    return {
-        localize: createScopedLocalize(data[key]),
-        getConfiguredDefaultLocale: (_a = data.getConfiguredDefaultLocale) !== null && _a !== void 0 ? _a : ((_) => undefined)
-    };
-}
-/**
- * Invoked by the loader at run-time
- */
-function load(name, req, load, config) {
-    var _a;
-    const pluginConfig = (_a = config['vs/nls']) !== null && _a !== void 0 ? _a : {};
-    if (!name || name.length === 0) {
-        return load({
-            localize: localize,
-            getConfiguredDefaultLocale: () => { var _a; return (_a = pluginConfig.availableLanguages) === null || _a === void 0 ? void 0 : _a['*']; }
-        });
-    }
-    const language = pluginConfig.availableLanguages ? findLanguageForModule(pluginConfig.availableLanguages, name) : null;
-    const useDefaultLanguage = language === null || language === DEFAULT_TAG;
-    let suffix = '.nls';
-    if (!useDefaultLanguage) {
-        suffix = suffix + '.' + language;
-    }
-    const messagesLoaded = (messages) => {
-        if (Array.isArray(messages)) {
-            messages.localize = createScopedLocalize(messages);
-        }
-        else {
-            messages.localize = createScopedLocalize(messages[name]);
-        }
-        messages.getConfiguredDefaultLocale = () => { var _a; return (_a = pluginConfig.availableLanguages) === null || _a === void 0 ? void 0 : _a['*']; };
-        load(messages);
-    };
-    if (typeof pluginConfig.loadBundle === 'function') {
-        pluginConfig.loadBundle(name, language, (err, messages) => {
-            // We have an error. Load the English default strings to not fail
-            if (err) {
-                req([name + '.nls'], messagesLoaded);
-            }
-            else {
-                messagesLoaded(messages);
-            }
-        });
-    }
-    else if (pluginConfig.translationServiceUrl && !useDefaultLanguage) {
-        (() => __awaiter(this, void 0, void 0, function* () {
-            var _b;
-            try {
-                const messages = yield getMessagesFromTranslationsService(pluginConfig.translationServiceUrl, language, name);
-                return messagesLoaded(messages);
-            }
-            catch (err) {
-                // Language is already as generic as it gets, so require default messages
-                if (!language.includes('-')) {
-                    console.error(err);
-                    return req([name + '.nls'], messagesLoaded);
-                }
-                try {
-                    // Since there is a dash, the language configured is a specific sub-language of the same generic language.
-                    // Since we were unable to load the specific language, try to load the generic language. Ex. we failed to find a
-                    // Swiss German (de-CH), so try to load the generic German (de) messages instead.
-                    const genericLanguage = language.split('-')[0];
-                    const messages = yield getMessagesFromTranslationsService(pluginConfig.translationServiceUrl, genericLanguage, name);
-                    // We got some messages, so we configure the configuration to use the generic language for this session.
-                    (_b = pluginConfig.availableLanguages) !== null && _b !== void 0 ? _b : (pluginConfig.availableLanguages = {});
-                    pluginConfig.availableLanguages['*'] = genericLanguage;
-                    return messagesLoaded(messages);
-                }
-                catch (err) {
-                    console.error(err);
-                    return req([name + '.nls'], messagesLoaded);
-                }
-            }
-        }))();
-    }
-    else {
-        req([name + suffix], messagesLoaded, (err) => {
-            if (suffix === '.nls') {
-                console.error('Failed trying to load default language strings', err);
-                return;
-            }
-            console.error(`Failed to load message bundle for language ${language}. Falling back to the default language:`, err);
-            req([name + '.nls'], messagesLoaded);
-        });
-    }
-}
-
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/platform.js
-var _a;
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
-const LANGUAGE_DEFAULT = 'en';
-let _isWindows = false;
-let _isMacintosh = false;
-let _isLinux = false;
-let _isLinuxSnap = false;
-let _isNative = false;
-let _isWeb = false;
-let _isElectron = false;
-let _isIOS = false;
-let _isCI = false;
-let _isMobile = false;
-let _locale = undefined;
-let _language = (/* unused pure expression or super */ null && (LANGUAGE_DEFAULT));
-let _platformLocale = (/* unused pure expression or super */ null && (LANGUAGE_DEFAULT));
-let _translationsConfigFile = (/* unused pure expression or super */ null && (undefined));
-let _userAgent = undefined;
-/**
- * @deprecated use `globalThis` instead
- */
-const globals = (typeof self === 'object' ? self : typeof __webpack_require__.g === 'object' ? __webpack_require__.g : {});
-let nodeProcess = undefined;
-if (typeof globals.vscode !== 'undefined' && typeof globals.vscode.process !== 'undefined') {
-    // Native environment (sandboxed)
-    nodeProcess = globals.vscode.process;
-}
-else if (typeof process !== 'undefined') {
-    // Native environment (non-sandboxed)
-    nodeProcess = process;
-}
-const isElectronProcess = typeof ((_a = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _a === void 0 ? void 0 : _a.electron) === 'string';
-const isElectronRenderer = isElectronProcess && (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.type) === 'renderer';
-// Web environment
-if (typeof navigator === 'object' && !isElectronRenderer) {
-    _userAgent = navigator.userAgent;
-    _isWindows = _userAgent.indexOf('Windows') >= 0;
-    _isMacintosh = _userAgent.indexOf('Macintosh') >= 0;
-    _isIOS = (_userAgent.indexOf('Macintosh') >= 0 || _userAgent.indexOf('iPad') >= 0 || _userAgent.indexOf('iPhone') >= 0) && !!navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
-    _isLinux = _userAgent.indexOf('Linux') >= 0;
-    _isMobile = (_userAgent === null || _userAgent === void 0 ? void 0 : _userAgent.indexOf('Mobi')) >= 0;
-    _isWeb = true;
-    const configuredLocale = getConfiguredDefaultLocale(
-    // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
-    // to ensure that the NLS AMD Loader plugin has been loaded and configured.
-    // This is because the loader plugin decides what the default locale is based on
-    // how it's able to resolve the strings.
-    localize({ key: 'ensureLoaderPluginIsLoaded', comment: ['{Locked}'] }, '_'));
-    _locale = configuredLocale || LANGUAGE_DEFAULT;
-    _language = _locale;
-    _platformLocale = navigator.language;
-}
-// Native environment
-else if (typeof nodeProcess === 'object') {
-    _isWindows = (nodeProcess.platform === 'win32');
-    _isMacintosh = (nodeProcess.platform === 'darwin');
-    _isLinux = (nodeProcess.platform === 'linux');
-    _isLinuxSnap = _isLinux && !!nodeProcess.env['SNAP'] && !!nodeProcess.env['SNAP_REVISION'];
-    _isElectron = isElectronProcess;
-    _isCI = !!nodeProcess.env['CI'] || !!nodeProcess.env['BUILD_ARTIFACTSTAGINGDIRECTORY'];
-    _locale = LANGUAGE_DEFAULT;
-    _language = LANGUAGE_DEFAULT;
-    const rawNlsConfig = nodeProcess.env['VSCODE_NLS_CONFIG'];
-    if (rawNlsConfig) {
-        try {
-            const nlsConfig = JSON.parse(rawNlsConfig);
-            const resolved = nlsConfig.availableLanguages['*'];
-            _locale = nlsConfig.locale;
-            _platformLocale = nlsConfig.osLocale;
-            // VSCode's default language is 'en'
-            _language = resolved ? resolved : LANGUAGE_DEFAULT;
-            _translationsConfigFile = nlsConfig._translationsConfigFile;
-        }
-        catch (e) {
-        }
-    }
-    _isNative = true;
-}
-// Unknown environment
-else {
-    console.error('Unable to resolve platform.');
-}
-let _platform = 0 /* Platform.Web */;
-if (_isMacintosh) {
-    _platform = 1 /* Platform.Mac */;
-}
-else if (_isWindows) {
-    _platform = 3 /* Platform.Windows */;
-}
-else if (_isLinux) {
-    _platform = 2 /* Platform.Linux */;
-}
-const isWindows = _isWindows;
-const isMacintosh = _isMacintosh;
-const isLinux = (/* unused pure expression or super */ null && (_isLinux));
-const isNative = (/* unused pure expression or super */ null && (_isNative));
-const platform_isWeb = (/* unused pure expression or super */ null && (_isWeb));
-const isWebWorker = (_isWeb && typeof globals.importScripts === 'function');
-const isIOS = (/* unused pure expression or super */ null && (_isIOS));
-const isMobile = (/* unused pure expression or super */ null && (_isMobile));
-const userAgent = _userAgent;
-/**
- * The language used for the user interface. The format of
- * the string is all lower case (e.g. zh-tw for Traditional
- * Chinese)
- */
-const language = (/* unused pure expression or super */ null && (_language));
-const setTimeout0IsFaster = (typeof globals.postMessage === 'function' && !globals.importScripts);
-/**
- * See https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#:~:text=than%204%2C%20then-,set%20timeout%20to%204,-.
- *
- * Works similarly to `setTimeout(0)` but doesn't suffer from the 4ms artificial delay
- * that browsers set when the nesting level is > 5.
- */
-const setTimeout0 = (() => {
-    if (setTimeout0IsFaster) {
-        const pending = [];
-        globals.addEventListener('message', (e) => {
-            if (e.data && e.data.vscodeScheduleAsyncWork) {
-                for (let i = 0, len = pending.length; i < len; i++) {
-                    const candidate = pending[i];
-                    if (candidate.id === e.data.vscodeScheduleAsyncWork) {
-                        pending.splice(i, 1);
-                        candidate.callback();
-                        return;
-                    }
-                }
-            }
-        });
-        let lastId = 0;
-        return (callback) => {
-            const myId = ++lastId;
-            pending.push({
-                id: myId,
-                callback: callback
-            });
-            globals.postMessage({ vscodeScheduleAsyncWork: myId }, '*');
-        };
-    }
-    return (callback) => setTimeout(callback);
-})();
-const OS = ((/* unused pure expression or super */ null && (_isMacintosh || _isIOS ? 2 /* OperatingSystem.Macintosh */ : (_isWindows ? 1 /* OperatingSystem.Windows */ : 3 /* OperatingSystem.Linux */))));
-let _isLittleEndian = true;
-let _isLittleEndianComputed = false;
-function isLittleEndian() {
-    if (!_isLittleEndianComputed) {
-        _isLittleEndianComputed = true;
-        const test = new Uint8Array(2);
-        test[0] = 1;
-        test[1] = 2;
-        const view = new Uint16Array(test.buffer);
-        _isLittleEndian = (view[0] === (2 << 8) + 1);
-    }
-    return _isLittleEndian;
-}
-const isChrome = !!(userAgent && userAgent.indexOf('Chrome') >= 0);
-const isFirefox = !!(userAgent && userAgent.indexOf('Firefox') >= 0);
-const isSafari = !!(!isChrome && (userAgent && userAgent.indexOf('Safari') >= 0));
-const isEdge = !!(userAgent && userAgent.indexOf('Edg/') >= 0);
-const isAndroid = !!(userAgent && userAgent.indexOf('Android') >= 0);
-
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/stopwatch.js
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
-const hasPerformanceNow = (globals.performance && typeof globals.performance.now === 'function');
+const hasPerformanceNow = (globalThis.performance && typeof globalThis.performance.now === 'function');
 class StopWatch {
-    static create(highResolution = true) {
+    static create(highResolution) {
         return new StopWatch(highResolution);
     }
     constructor(highResolution) {
-        this._highResolution = hasPerformanceNow && highResolution;
+        this._now = hasPerformanceNow && highResolution === false ? Date.now : globalThis.performance.now.bind(globalThis.performance);
         this._startTime = this._now();
         this._stopTime = -1;
     }
@@ -1193,12 +825,9 @@ class StopWatch {
         }
         return this._now() - this._startTime;
     }
-    _now() {
-        return this._highResolution ? globals.performance.now() : Date.now();
-    }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/event.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/event.js
 
 
 
@@ -1748,6 +1377,7 @@ var Event;
                 }
             };
             observable.addObserver(observer);
+            observable.reportChanges();
             return {
                 dispose() {
                     observable.removeObserver(observer);
@@ -1767,7 +1397,7 @@ class EventProfiling {
         EventProfiling.all.add(this);
     }
     start(listenerCount) {
-        this._stopWatch = new StopWatch(true);
+        this._stopWatch = new StopWatch();
         this.listenerCount = listenerCount;
     }
     stop() {
@@ -1838,17 +1468,25 @@ class Stacktrace {
         console.warn(this.value.split('\n').slice(2).join('\n'));
     }
 }
-class Listener {
-    constructor(callback, callbackThis, stack) {
-        this.callback = callback;
-        this.callbackThis = callbackThis;
-        this.stack = stack;
-        this.subscription = new SafeDisposable();
-    }
-    invoke(e) {
-        this.callback.call(this.callbackThis, e);
+class UniqueContainer {
+    constructor(value) {
+        this.value = value;
     }
 }
+const compactionThreshold = 2;
+const forEachListener = (listeners, fn) => {
+    if (listeners instanceof UniqueContainer) {
+        fn(listeners);
+    }
+    else {
+        for (let i = 0; i < listeners.length; i++) {
+            const l = listeners[i];
+            if (l) {
+                fn(l);
+            }
+        }
+    }
+};
 /**
  * The Emitter can be used to expose an Event to the public
  * to fire it from the insides.
@@ -1873,7 +1511,7 @@ class Listener {
 class Emitter {
     constructor(options) {
         var _a, _b, _c, _d, _e;
-        this._disposed = false;
+        this._size = 0;
         this._options = options;
         this._leakageMon = _globalLeakWarningThreshold > 0 || ((_a = this._options) === null || _a === void 0 ? void 0 : _a.leakWarningThreshold) ? new LeakageMonitor((_c = (_b = this._options) === null || _b === void 0 ? void 0 : _b.leakWarningThreshold) !== null && _c !== void 0 ? _c : _globalLeakWarningThreshold) : undefined;
         this._perfMon = ((_d = this._options) === null || _d === void 0 ? void 0 : _d._profName) ? new EventProfiling(this._options._profName) : undefined;
@@ -1892,22 +1530,19 @@ class Emitter {
             // this._disposables.add(someModel.onDidChange(() => { ... }); // (2) subscribe and register model-event listener
             // ...later...
             // this._disposables.dispose(); disposes (1) then (2): don't warn after (1) but after the "overall dispose" is done
+            if (((_a = this._deliveryQueue) === null || _a === void 0 ? void 0 : _a.current) === this) {
+                this._deliveryQueue.reset();
+            }
             if (this._listeners) {
                 if (_enableDisposeWithListenerWarning) {
-                    const listeners = Array.from(this._listeners);
+                    const listeners = this._listeners;
                     queueMicrotask(() => {
-                        var _a;
-                        for (const listener of listeners) {
-                            if (listener.subscription.isset()) {
-                                listener.subscription.unset();
-                                (_a = listener.stack) === null || _a === void 0 ? void 0 : _a.print();
-                            }
-                        }
+                        forEachListener(listeners, l => { var _a; return (_a = l.stack) === null || _a === void 0 ? void 0 : _a.print(); });
                     });
                 }
-                this._listeners.clear();
+                this._listeners = undefined;
+                this._size = 0;
             }
-            (_a = this._deliveryQueue) === null || _a === void 0 ? void 0 : _a.clear(this);
             (_c = (_b = this._options) === null || _b === void 0 ? void 0 : _b.onDidRemoveLastListener) === null || _c === void 0 ? void 0 : _c.call(_b);
             (_d = this._leakageMon) === null || _d === void 0 ? void 0 : _d.dispose();
         }
@@ -1917,139 +1552,171 @@ class Emitter {
      * to events from this Emitter
      */
     get event() {
-        if (!this._event) {
-            this._event = (callback, thisArgs, disposables) => {
-                var _a, _b, _c;
-                if (!this._listeners) {
-                    this._listeners = new linkedList_LinkedList();
-                }
-                if (this._leakageMon && this._listeners.size > this._leakageMon.threshold * 3) {
-                    console.warn(`[${this._leakageMon.name}] REFUSES to accept new listeners because it exceeded its threshold by far`);
-                    return lifecycle_Disposable.None;
-                }
-                const firstListener = this._listeners.isEmpty();
-                if (firstListener && ((_a = this._options) === null || _a === void 0 ? void 0 : _a.onWillAddFirstListener)) {
-                    this._options.onWillAddFirstListener(this);
-                }
-                let removeMonitor;
-                let stack;
-                if (this._leakageMon && this._listeners.size >= Math.ceil(this._leakageMon.threshold * 0.2)) {
-                    // check and record this emitter for potential leakage
-                    stack = Stacktrace.create();
-                    removeMonitor = this._leakageMon.check(stack, this._listeners.size + 1);
-                }
-                if (_enableDisposeWithListenerWarning) {
-                    stack = stack !== null && stack !== void 0 ? stack : Stacktrace.create();
-                }
-                const listener = new Listener(callback, thisArgs, stack);
-                const removeListener = this._listeners.push(listener);
-                if (firstListener && ((_b = this._options) === null || _b === void 0 ? void 0 : _b.onDidAddFirstListener)) {
-                    this._options.onDidAddFirstListener(this);
-                }
-                if ((_c = this._options) === null || _c === void 0 ? void 0 : _c.onDidAddListener) {
-                    this._options.onDidAddListener(this, callback, thisArgs);
-                }
-                const result = listener.subscription.set(() => {
-                    var _a, _b;
-                    removeMonitor === null || removeMonitor === void 0 ? void 0 : removeMonitor();
-                    if (!this._disposed) {
-                        (_b = (_a = this._options) === null || _a === void 0 ? void 0 : _a.onWillRemoveListener) === null || _b === void 0 ? void 0 : _b.call(_a, this);
-                        removeListener();
-                        if (this._options && this._options.onDidRemoveLastListener) {
-                            const hasListeners = (this._listeners && !this._listeners.isEmpty());
-                            if (!hasListeners) {
-                                this._options.onDidRemoveLastListener(this);
-                            }
-                        }
-                    }
-                });
-                if (disposables instanceof DisposableStore) {
-                    disposables.add(result);
-                }
-                else if (Array.isArray(disposables)) {
-                    disposables.push(result);
-                }
-                return result;
-            };
-        }
+        var _a;
+        (_a = this._event) !== null && _a !== void 0 ? _a : (this._event = (callback, thisArgs, disposables) => {
+            var _a, _b, _c, _d, _e;
+            if (this._leakageMon && this._size > this._leakageMon.threshold * 3) {
+                console.warn(`[${this._leakageMon.name}] REFUSES to accept new listeners because it exceeded its threshold by far`);
+                return lifecycle_Disposable.None;
+            }
+            if (this._disposed) {
+                // todo: should we warn if a listener is added to a disposed emitter? This happens often
+                return lifecycle_Disposable.None;
+            }
+            if (thisArgs) {
+                callback = callback.bind(thisArgs);
+            }
+            const contained = new UniqueContainer(callback);
+            let removeMonitor;
+            let stack;
+            if (this._leakageMon && this._size >= Math.ceil(this._leakageMon.threshold * 0.2)) {
+                // check and record this emitter for potential leakage
+                contained.stack = Stacktrace.create();
+                removeMonitor = this._leakageMon.check(contained.stack, this._size + 1);
+            }
+            if (_enableDisposeWithListenerWarning) {
+                contained.stack = stack !== null && stack !== void 0 ? stack : Stacktrace.create();
+            }
+            if (!this._listeners) {
+                (_b = (_a = this._options) === null || _a === void 0 ? void 0 : _a.onWillAddFirstListener) === null || _b === void 0 ? void 0 : _b.call(_a, this);
+                this._listeners = contained;
+                (_d = (_c = this._options) === null || _c === void 0 ? void 0 : _c.onDidAddFirstListener) === null || _d === void 0 ? void 0 : _d.call(_c, this);
+            }
+            else if (this._listeners instanceof UniqueContainer) {
+                (_e = this._deliveryQueue) !== null && _e !== void 0 ? _e : (this._deliveryQueue = new EventDeliveryQueuePrivate());
+                this._listeners = [this._listeners, contained];
+            }
+            else {
+                this._listeners.push(contained);
+            }
+            this._size++;
+            const result = lifecycle_toDisposable(() => { removeMonitor === null || removeMonitor === void 0 ? void 0 : removeMonitor(); this._removeListener(contained); });
+            if (disposables instanceof DisposableStore) {
+                disposables.add(result);
+            }
+            else if (Array.isArray(disposables)) {
+                disposables.push(result);
+            }
+            return result;
+        });
         return this._event;
+    }
+    _removeListener(listener) {
+        var _a, _b, _c, _d;
+        (_b = (_a = this._options) === null || _a === void 0 ? void 0 : _a.onWillRemoveListener) === null || _b === void 0 ? void 0 : _b.call(_a, this);
+        if (!this._listeners) {
+            return; // expected if a listener gets disposed
+        }
+        if (this._size === 1) {
+            this._listeners = undefined;
+            (_d = (_c = this._options) === null || _c === void 0 ? void 0 : _c.onDidRemoveLastListener) === null || _d === void 0 ? void 0 : _d.call(_c, this);
+            this._size = 0;
+            return;
+        }
+        // size > 1 which requires that listeners be a list:
+        const listeners = this._listeners;
+        const index = listeners.indexOf(listener);
+        if (index === -1) {
+            console.log('disposed?', this._disposed);
+            console.log('size?', this._size);
+            console.log('arr?', JSON.stringify(this._listeners));
+            throw new Error('Attempted to dispose unknown listener');
+        }
+        this._size--;
+        listeners[index] = undefined;
+        const adjustDeliveryQueue = this._deliveryQueue.current === this;
+        if (this._size * compactionThreshold <= listeners.length) {
+            let n = 0;
+            for (let i = 0; i < listeners.length; i++) {
+                if (listeners[i]) {
+                    listeners[n++] = listeners[i];
+                }
+                else if (adjustDeliveryQueue) {
+                    this._deliveryQueue.end--;
+                    if (n < this._deliveryQueue.i) {
+                        this._deliveryQueue.i--;
+                    }
+                }
+            }
+            listeners.length = n;
+        }
+    }
+    _deliver(listener, value) {
+        var _a;
+        if (!listener) {
+            return;
+        }
+        const errorHandler = ((_a = this._options) === null || _a === void 0 ? void 0 : _a.onListenerError) || onUnexpectedError;
+        if (!errorHandler) {
+            listener.value(value);
+            return;
+        }
+        try {
+            listener.value(value);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
+    }
+    /** Delivers items in the queue. Assumes the queue is ready to go. */
+    _deliverQueue(dq) {
+        const listeners = dq.current._listeners;
+        while (dq.i < dq.end) {
+            // important: dq.i is incremented before calling deliver() because it might reenter deliverQueue()
+            this._deliver(listeners[dq.i++], dq.value);
+        }
+        dq.reset();
     }
     /**
      * To be kept private to fire an event to
      * subscribers
      */
     fire(event) {
-        var _a, _b, _c;
-        if (this._listeners) {
-            // put all [listener,event]-pairs into delivery queue
-            // then emit all event. an inner/nested event might be
-            // the driver of this
-            if (!this._deliveryQueue) {
-                this._deliveryQueue = new PrivateEventDeliveryQueue((_a = this._options) === null || _a === void 0 ? void 0 : _a.onListenerError);
-            }
-            for (const listener of this._listeners) {
-                this._deliveryQueue.push(this, listener, event);
-            }
-            // start/stop performance insight collection
-            (_b = this._perfMon) === null || _b === void 0 ? void 0 : _b.start(this._deliveryQueue.size);
-            this._deliveryQueue.deliver();
-            (_c = this._perfMon) === null || _c === void 0 ? void 0 : _c.stop();
+        var _a, _b, _c, _d;
+        if ((_a = this._deliveryQueue) === null || _a === void 0 ? void 0 : _a.current) {
+            this._deliverQueue(this._deliveryQueue);
+            (_b = this._perfMon) === null || _b === void 0 ? void 0 : _b.stop(); // last fire() will have starting perfmon, stop it before starting the next dispatch
         }
+        (_c = this._perfMon) === null || _c === void 0 ? void 0 : _c.start(this._size);
+        if (!this._listeners) {
+            // no-op
+        }
+        else if (this._listeners instanceof UniqueContainer) {
+            this._deliver(this._listeners, event);
+        }
+        else {
+            const dq = this._deliveryQueue;
+            dq.enqueue(this, event, this._listeners.length);
+            this._deliverQueue(dq);
+        }
+        (_d = this._perfMon) === null || _d === void 0 ? void 0 : _d.stop();
     }
     hasListeners() {
-        if (!this._listeners) {
-            return false;
-        }
-        return !this._listeners.isEmpty();
+        return this._size > 0;
     }
 }
-class EventDeliveryQueue {
-    constructor(_onListenerError = onUnexpectedError) {
-        this._onListenerError = _onListenerError;
-        this._queue = new linkedList_LinkedList();
+const createEventDeliveryQueue = () => new EventDeliveryQueuePrivate();
+class EventDeliveryQueuePrivate {
+    constructor() {
+        /**
+         * Index in current's listener list.
+         */
+        this.i = -1;
+        /**
+         * The last index in the listener's list to deliver.
+         */
+        this.end = 0;
     }
-    get size() {
-        return this._queue.size;
+    enqueue(emitter, value, end) {
+        this.i = 0;
+        this.end = end;
+        this.current = emitter;
+        this.value = value;
     }
-    push(emitter, listener, event) {
-        this._queue.push(new EventDeliveryQueueElement(emitter, listener, event));
-    }
-    clear(emitter) {
-        const newQueue = new linkedList_LinkedList();
-        for (const element of this._queue) {
-            if (element.emitter !== emitter) {
-                newQueue.push(element);
-            }
-        }
-        this._queue = newQueue;
-    }
-    deliver() {
-        while (this._queue.size > 0) {
-            const element = this._queue.shift();
-            try {
-                element.listener.invoke(element.event);
-            }
-            catch (e) {
-                this._onListenerError(e);
-            }
-        }
-    }
-}
-/**
- * An `EventDeliveryQueue` that is guaranteed to be used by a single `Emitter`.
- */
-class PrivateEventDeliveryQueue extends EventDeliveryQueue {
-    clear(emitter) {
-        // Here we can just clear the entire linked list because
-        // all elements are guaranteed to belong to this emitter
-        this._queue.clear();
-    }
-}
-class EventDeliveryQueueElement {
-    constructor(emitter, listener, event) {
-        this.emitter = emitter;
-        this.listener = listener;
-        this.event = event;
+    reset() {
+        this.i = this.end; // force any current emission loop to stop, mainly for during dispose
+        this.current = undefined;
+        this.value = undefined;
     }
 }
 class PauseableEmitter extends (/* unused pure expression or super */ null && (Emitter)) {
@@ -2083,7 +1750,7 @@ class PauseableEmitter extends (/* unused pure expression or super */ null && (E
         }
     }
     fire(event) {
-        if (this._listeners) {
+        if (this._size) {
             if (this._isPaused !== 0) {
                 this._eventQueue.push(event);
             }
@@ -2268,7 +1935,7 @@ class Relay {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/objects.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/objects.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -2420,10 +2087,9 @@ function objects_equals(one, other) {
 }
 function getAllPropertyNames(obj) {
     let res = [];
-    let proto = Object.getPrototypeOf(obj);
-    while (Object.prototype !== proto) {
-        res = res.concat(Object.getOwnPropertyNames(proto));
-        proto = Object.getPrototypeOf(proto);
+    while (Object.prototype !== obj) {
+        res = res.concat(Object.getOwnPropertyNames(obj));
+        obj = Object.getPrototypeOf(obj);
     }
     return res;
 }
@@ -2450,7 +2116,363 @@ function createProxyObject(methodNames, invoke) {
     return result;
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/cache.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/nls.js
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+let isPseudo = (typeof document !== 'undefined' && document.location && document.location.hash.indexOf('pseudo=true') >= 0);
+const DEFAULT_TAG = 'i-default';
+function _format(message, args) {
+    let result;
+    if (args.length === 0) {
+        result = message;
+    }
+    else {
+        result = message.replace(/\{(\d+)\}/g, (match, rest) => {
+            const index = rest[0];
+            const arg = args[index];
+            let result = match;
+            if (typeof arg === 'string') {
+                result = arg;
+            }
+            else if (typeof arg === 'number' || typeof arg === 'boolean' || arg === void 0 || arg === null) {
+                result = String(arg);
+            }
+            return result;
+        });
+    }
+    if (isPseudo) {
+        // FF3B and FF3D is the Unicode zenkaku representation for [ and ]
+        result = '\uFF3B' + result.replace(/[aouei]/g, '$&$&') + '\uFF3D';
+    }
+    return result;
+}
+function findLanguageForModule(config, name) {
+    let result = config[name];
+    if (result) {
+        return result;
+    }
+    result = config['*'];
+    if (result) {
+        return result;
+    }
+    return null;
+}
+function endWithSlash(path) {
+    if (path.charAt(path.length - 1) === '/') {
+        return path;
+    }
+    return path + '/';
+}
+function getMessagesFromTranslationsService(translationServiceUrl, language, name) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = endWithSlash(translationServiceUrl) + endWithSlash(language) + 'vscode/' + endWithSlash(name);
+        const res = yield fetch(url);
+        if (res.ok) {
+            const messages = yield res.json();
+            return messages;
+        }
+        throw new Error(`${res.status} - ${res.statusText}`);
+    });
+}
+function createScopedLocalize(scope) {
+    return function (idx, defaultValue) {
+        const restArgs = Array.prototype.slice.call(arguments, 2);
+        return _format(scope[idx], restArgs);
+    };
+}
+/**
+ * @skipMangle
+ */
+function nls_localize(data, message, ...args) {
+    return _format(message, args);
+}
+/**
+ * @skipMangle
+ */
+function getConfiguredDefaultLocale(_) {
+    // This returns undefined because this implementation isn't used and is overwritten by the loader
+    // when loaded.
+    return undefined;
+}
+/**
+ * @skipMangle
+ */
+function setPseudoTranslation(value) {
+    isPseudo = value;
+}
+/**
+ * Invoked in a built product at run-time
+ * @skipMangle
+ */
+function create(key, data) {
+    var _a;
+    return {
+        localize: createScopedLocalize(data[key]),
+        getConfiguredDefaultLocale: (_a = data.getConfiguredDefaultLocale) !== null && _a !== void 0 ? _a : ((_) => undefined)
+    };
+}
+/**
+ * Invoked by the loader at run-time
+ * @skipMangle
+ */
+function load(name, req, load, config) {
+    var _a;
+    const pluginConfig = (_a = config['vs/nls']) !== null && _a !== void 0 ? _a : {};
+    if (!name || name.length === 0) {
+        // TODO: We need to give back the mangled names here
+        return load({
+            localize: nls_localize,
+            getConfiguredDefaultLocale: () => { var _a; return (_a = pluginConfig.availableLanguages) === null || _a === void 0 ? void 0 : _a['*']; }
+        });
+    }
+    const language = pluginConfig.availableLanguages ? findLanguageForModule(pluginConfig.availableLanguages, name) : null;
+    const useDefaultLanguage = language === null || language === DEFAULT_TAG;
+    let suffix = '.nls';
+    if (!useDefaultLanguage) {
+        suffix = suffix + '.' + language;
+    }
+    const messagesLoaded = (messages) => {
+        if (Array.isArray(messages)) {
+            messages.localize = createScopedLocalize(messages);
+        }
+        else {
+            messages.localize = createScopedLocalize(messages[name]);
+        }
+        messages.getConfiguredDefaultLocale = () => { var _a; return (_a = pluginConfig.availableLanguages) === null || _a === void 0 ? void 0 : _a['*']; };
+        load(messages);
+    };
+    if (typeof pluginConfig.loadBundle === 'function') {
+        pluginConfig.loadBundle(name, language, (err, messages) => {
+            // We have an error. Load the English default strings to not fail
+            if (err) {
+                req([name + '.nls'], messagesLoaded);
+            }
+            else {
+                messagesLoaded(messages);
+            }
+        });
+    }
+    else if (pluginConfig.translationServiceUrl && !useDefaultLanguage) {
+        (() => __awaiter(this, void 0, void 0, function* () {
+            var _b;
+            try {
+                const messages = yield getMessagesFromTranslationsService(pluginConfig.translationServiceUrl, language, name);
+                return messagesLoaded(messages);
+            }
+            catch (err) {
+                // Language is already as generic as it gets, so require default messages
+                if (!language.includes('-')) {
+                    console.error(err);
+                    return req([name + '.nls'], messagesLoaded);
+                }
+                try {
+                    // Since there is a dash, the language configured is a specific sub-language of the same generic language.
+                    // Since we were unable to load the specific language, try to load the generic language. Ex. we failed to find a
+                    // Swiss German (de-CH), so try to load the generic German (de) messages instead.
+                    const genericLanguage = language.split('-')[0];
+                    const messages = yield getMessagesFromTranslationsService(pluginConfig.translationServiceUrl, genericLanguage, name);
+                    // We got some messages, so we configure the configuration to use the generic language for this session.
+                    (_b = pluginConfig.availableLanguages) !== null && _b !== void 0 ? _b : (pluginConfig.availableLanguages = {});
+                    pluginConfig.availableLanguages['*'] = genericLanguage;
+                    return messagesLoaded(messages);
+                }
+                catch (err) {
+                    console.error(err);
+                    return req([name + '.nls'], messagesLoaded);
+                }
+            }
+        }))();
+    }
+    else {
+        req([name + suffix], messagesLoaded, (err) => {
+            if (suffix === '.nls') {
+                console.error('Failed trying to load default language strings', err);
+                return;
+            }
+            console.error(`Failed to load message bundle for language ${language}. Falling back to the default language:`, err);
+            req([name + '.nls'], messagesLoaded);
+        });
+    }
+}
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/platform.js
+var _a;
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+const LANGUAGE_DEFAULT = 'en';
+let _isWindows = false;
+let _isMacintosh = false;
+let _isLinux = false;
+let _isLinuxSnap = false;
+let _isNative = false;
+let _isWeb = false;
+let _isElectron = false;
+let _isIOS = false;
+let _isCI = false;
+let _isMobile = false;
+let _locale = undefined;
+let _language = (/* unused pure expression or super */ null && (LANGUAGE_DEFAULT));
+let _platformLocale = (/* unused pure expression or super */ null && (LANGUAGE_DEFAULT));
+let _translationsConfigFile = (/* unused pure expression or super */ null && (undefined));
+let _userAgent = undefined;
+/**
+ * @deprecated use `globalThis` instead
+ */
+const globals = (typeof self === 'object' ? self : typeof __webpack_require__.g === 'object' ? __webpack_require__.g : {});
+let nodeProcess = undefined;
+if (typeof globals.vscode !== 'undefined' && typeof globals.vscode.process !== 'undefined') {
+    // Native environment (sandboxed)
+    nodeProcess = globals.vscode.process;
+}
+else if (typeof process !== 'undefined') {
+    // Native environment (non-sandboxed)
+    nodeProcess = process;
+}
+const isElectronProcess = typeof ((_a = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _a === void 0 ? void 0 : _a.electron) === 'string';
+const isElectronRenderer = isElectronProcess && (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.type) === 'renderer';
+// Web environment
+if (typeof navigator === 'object' && !isElectronRenderer) {
+    _userAgent = navigator.userAgent;
+    _isWindows = _userAgent.indexOf('Windows') >= 0;
+    _isMacintosh = _userAgent.indexOf('Macintosh') >= 0;
+    _isIOS = (_userAgent.indexOf('Macintosh') >= 0 || _userAgent.indexOf('iPad') >= 0 || _userAgent.indexOf('iPhone') >= 0) && !!navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
+    _isLinux = _userAgent.indexOf('Linux') >= 0;
+    _isMobile = (_userAgent === null || _userAgent === void 0 ? void 0 : _userAgent.indexOf('Mobi')) >= 0;
+    _isWeb = true;
+    const configuredLocale = getConfiguredDefaultLocale(
+    // This call _must_ be done in the file that calls `nls.getConfiguredDefaultLocale`
+    // to ensure that the NLS AMD Loader plugin has been loaded and configured.
+    // This is because the loader plugin decides what the default locale is based on
+    // how it's able to resolve the strings.
+    nls_localize({ key: 'ensureLoaderPluginIsLoaded', comment: ['{Locked}'] }, '_'));
+    _locale = configuredLocale || LANGUAGE_DEFAULT;
+    _language = _locale;
+    _platformLocale = navigator.language;
+}
+// Native environment
+else if (typeof nodeProcess === 'object') {
+    _isWindows = (nodeProcess.platform === 'win32');
+    _isMacintosh = (nodeProcess.platform === 'darwin');
+    _isLinux = (nodeProcess.platform === 'linux');
+    _isLinuxSnap = _isLinux && !!nodeProcess.env['SNAP'] && !!nodeProcess.env['SNAP_REVISION'];
+    _isElectron = isElectronProcess;
+    _isCI = !!nodeProcess.env['CI'] || !!nodeProcess.env['BUILD_ARTIFACTSTAGINGDIRECTORY'];
+    _locale = LANGUAGE_DEFAULT;
+    _language = LANGUAGE_DEFAULT;
+    const rawNlsConfig = nodeProcess.env['VSCODE_NLS_CONFIG'];
+    if (rawNlsConfig) {
+        try {
+            const nlsConfig = JSON.parse(rawNlsConfig);
+            const resolved = nlsConfig.availableLanguages['*'];
+            _locale = nlsConfig.locale;
+            _platformLocale = nlsConfig.osLocale;
+            // VSCode's default language is 'en'
+            _language = resolved ? resolved : LANGUAGE_DEFAULT;
+            _translationsConfigFile = nlsConfig._translationsConfigFile;
+        }
+        catch (e) {
+        }
+    }
+    _isNative = true;
+}
+// Unknown environment
+else {
+    console.error('Unable to resolve platform.');
+}
+let _platform = 0 /* Platform.Web */;
+if (_isMacintosh) {
+    _platform = 1 /* Platform.Mac */;
+}
+else if (_isWindows) {
+    _platform = 3 /* Platform.Windows */;
+}
+else if (_isLinux) {
+    _platform = 2 /* Platform.Linux */;
+}
+const isWindows = _isWindows;
+const isMacintosh = _isMacintosh;
+const isLinux = (/* unused pure expression or super */ null && (_isLinux));
+const isNative = (/* unused pure expression or super */ null && (_isNative));
+const platform_isWeb = (/* unused pure expression or super */ null && (_isWeb));
+const isWebWorker = (_isWeb && typeof globals.importScripts === 'function');
+const isIOS = (/* unused pure expression or super */ null && (_isIOS));
+const isMobile = (/* unused pure expression or super */ null && (_isMobile));
+const userAgent = _userAgent;
+/**
+ * The language used for the user interface. The format of
+ * the string is all lower case (e.g. zh-tw for Traditional
+ * Chinese)
+ */
+const language = (/* unused pure expression or super */ null && (_language));
+const setTimeout0IsFaster = (typeof globals.postMessage === 'function' && !globals.importScripts);
+/**
+ * See https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#:~:text=than%204%2C%20then-,set%20timeout%20to%204,-.
+ *
+ * Works similarly to `setTimeout(0)` but doesn't suffer from the 4ms artificial delay
+ * that browsers set when the nesting level is > 5.
+ */
+const setTimeout0 = (() => {
+    if (setTimeout0IsFaster) {
+        const pending = [];
+        globals.addEventListener('message', (e) => {
+            if (e.data && e.data.vscodeScheduleAsyncWork) {
+                for (let i = 0, len = pending.length; i < len; i++) {
+                    const candidate = pending[i];
+                    if (candidate.id === e.data.vscodeScheduleAsyncWork) {
+                        pending.splice(i, 1);
+                        candidate.callback();
+                        return;
+                    }
+                }
+            }
+        });
+        let lastId = 0;
+        return (callback) => {
+            const myId = ++lastId;
+            pending.push({
+                id: myId,
+                callback: callback
+            });
+            globals.postMessage({ vscodeScheduleAsyncWork: myId }, '*');
+        };
+    }
+    return (callback) => setTimeout(callback);
+})();
+const OS = ((/* unused pure expression or super */ null && (_isMacintosh || _isIOS ? 2 /* OperatingSystem.Macintosh */ : (_isWindows ? 1 /* OperatingSystem.Windows */ : 3 /* OperatingSystem.Linux */))));
+let _isLittleEndian = true;
+let _isLittleEndianComputed = false;
+function isLittleEndian() {
+    if (!_isLittleEndianComputed) {
+        _isLittleEndianComputed = true;
+        const test = new Uint8Array(2);
+        test[0] = 1;
+        test[1] = 2;
+        const view = new Uint16Array(test.buffer);
+        _isLittleEndian = (view[0] === (2 << 8) + 1);
+    }
+    return _isLittleEndian;
+}
+const isChrome = !!(userAgent && userAgent.indexOf('Chrome') >= 0);
+const isFirefox = !!(userAgent && userAgent.indexOf('Firefox') >= 0);
+const isSafari = !!(!isChrome && (userAgent && userAgent.indexOf('Safari') >= 0));
+const isEdge = !!(userAgent && userAgent.indexOf('Edg/') >= 0);
+const isAndroid = !!(userAgent && userAgent.indexOf('Android') >= 0);
+
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/cache.js
 /**
  * Uses a LRU cache to make a given parametrized function cached.
  * Caches just the last value.
@@ -2492,7 +2514,7 @@ class CachedFunction {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/lazy.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/lazy.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -2531,7 +2553,7 @@ class Lazy {
     get rawValue() { return this._value; }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/strings.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/strings.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -3355,7 +3377,7 @@ class InvisibleCharacters {
 }
 InvisibleCharacters._data = undefined;
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -3792,12 +3814,13 @@ class SimpleWorkerServer {
 }
 /**
  * Called on the worker side
+ * @skipMangle
  */
 function simpleWorker_create(postMessage) {
     return new SimpleWorkerServer(postMessage, null);
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/diff/diffChange.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/diff/diffChange.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -3831,7 +3854,7 @@ class DiffChange {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/hash.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/hash.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4091,7 +4114,7 @@ class StringSHA1 {
 }
 StringSHA1._bigBlock32 = new DataView(new ArrayBuffer(320)); // 80 * 4 = 320
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/diff/diff.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/diff/diff.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4992,7 +5015,7 @@ class LcsDiff {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/process.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/process.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5034,6 +5057,8 @@ else {
  * environments.
  *
  * Note: in web, this property is hardcoded to be `/`.
+ *
+ * @skipMangle
  */
 const process_cwd = safeProcess.cwd;
 /**
@@ -5049,7 +5074,7 @@ const env = safeProcess.env;
  */
 const platform = safeProcess.platform;
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/path.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/path.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6444,7 +6469,7 @@ const basename = (platformIsWin32 ? win32.basename : posix.basename);
 const extname = (platformIsWin32 ? win32.extname : posix.extname);
 const sep = (platformIsWin32 ? win32.sep : posix.sep);
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/uri.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/uri.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7049,7 +7074,7 @@ function percentDecode(str) {
     return str.replace(_rEncodedAsHex, (match) => decodeURIComponentGraceful(match));
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/position.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/position.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7185,7 +7210,7 @@ class position_Position {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/range.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/range.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7587,7 +7612,7 @@ class range_Range {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/arrays.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/arrays.js
 /**
  * Returns the last element of an array.
  * @param array The array.
@@ -8089,7 +8114,7 @@ class CallbackIterable {
 }
 CallbackIterable.empty = new CallbackIterable(_callback => { });
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/uint.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/uint.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8113,7 +8138,7 @@ function toUint32(v) {
     return v | 0;
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/model/prefixSumComputer.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/model/prefixSumComputer.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8338,7 +8363,7 @@ class PrefixSumIndexOfResult {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8454,7 +8479,7 @@ class MirrorTextModel {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/wordHelper.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/wordHelper.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8578,7 +8603,7 @@ function _findRegexMatchEnclosingPosition(wordDefinition, text, pos, stopPos) {
     return null;
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/characterClassifier.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/characterClassifier.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8636,7 +8661,7 @@ class CharacterSet {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/languages/linkComputer.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/languages/linkComputer.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8908,7 +8933,7 @@ function computeLinks(model) {
     return LinkComputer.computeLinks(model);
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/languages/supports/inplaceReplaceSupport.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/languages/supports/inplaceReplaceSupport.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8995,7 +9020,7 @@ class BasicInplaceReplace {
 }
 BasicInplaceReplace.INSTANCE = new BasicInplaceReplace();
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/cancellation.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/cancellation.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9106,7 +9131,7 @@ class CancellationTokenSource {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/keyCodes.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/keyCodes.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9480,7 +9505,7 @@ function KeyChord(firstPart, secondPart) {
     return (firstPart | chordPart) >>> 0;
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/selection.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/selection.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9624,7 +9649,7 @@ class Selection extends range_Range {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/types.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/types.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9757,7 +9782,7 @@ function withUndefinedAsNull(x) {
     return typeof x === 'undefined' ? null : x;
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/codicons.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/codicons.js
 
 const _codiconFontCharacters = Object.create(null);
 function register(id, fontCharacter) {
@@ -10327,7 +10352,7 @@ const Codicon = {
     quickInputBack: register('quick-input-back', 'arrow-left')
 };
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/tokenizationRegistry.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/tokenizationRegistry.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10465,7 +10490,8 @@ class TokenizationSupportFactoryData extends lifecycle_Disposable {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/languages.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/languages.js
+
 
 
 
@@ -10664,6 +10690,43 @@ function isLocationLink(thing) {
 /**
  * @internal
  */
+const symbolKindNames = {
+    [17 /* SymbolKind.Array */]: nls_localize('Array', "array"),
+    [16 /* SymbolKind.Boolean */]: nls_localize('Boolean', "boolean"),
+    [4 /* SymbolKind.Class */]: nls_localize('Class', "class"),
+    [13 /* SymbolKind.Constant */]: nls_localize('Constant', "constant"),
+    [8 /* SymbolKind.Constructor */]: nls_localize('Constructor', "constructor"),
+    [9 /* SymbolKind.Enum */]: nls_localize('Enum', "enumeration"),
+    [21 /* SymbolKind.EnumMember */]: nls_localize('EnumMember', "enumeration member"),
+    [23 /* SymbolKind.Event */]: nls_localize('Event', "event"),
+    [7 /* SymbolKind.Field */]: nls_localize('Field', "field"),
+    [0 /* SymbolKind.File */]: nls_localize('File', "file"),
+    [11 /* SymbolKind.Function */]: nls_localize('Function', "function"),
+    [10 /* SymbolKind.Interface */]: nls_localize('Interface', "interface"),
+    [19 /* SymbolKind.Key */]: nls_localize('Key', "key"),
+    [5 /* SymbolKind.Method */]: nls_localize('Method', "method"),
+    [1 /* SymbolKind.Module */]: nls_localize('Module', "module"),
+    [2 /* SymbolKind.Namespace */]: nls_localize('Namespace', "namespace"),
+    [20 /* SymbolKind.Null */]: nls_localize('Null', "null"),
+    [15 /* SymbolKind.Number */]: nls_localize('Number', "number"),
+    [18 /* SymbolKind.Object */]: nls_localize('Object', "object"),
+    [24 /* SymbolKind.Operator */]: nls_localize('Operator', "operator"),
+    [3 /* SymbolKind.Package */]: nls_localize('Package', "package"),
+    [6 /* SymbolKind.Property */]: nls_localize('Property', "property"),
+    [14 /* SymbolKind.String */]: nls_localize('String', "string"),
+    [22 /* SymbolKind.Struct */]: nls_localize('Struct', "struct"),
+    [25 /* SymbolKind.TypeParameter */]: nls_localize('TypeParameter', "type parameter"),
+    [12 /* SymbolKind.Variable */]: nls_localize('Variable', "variable"),
+};
+/**
+ * @internal
+ */
+function getAriaLabelForSymbol(symbolName, kind) {
+    return localize('symbolAriaLabel', '{0} ({1})', symbolName, symbolKindNames[kind]);
+}
+/**
+ * @internal
+ */
 var SymbolKinds;
 (function (SymbolKinds) {
     const byKind = new Map();
@@ -10706,6 +10769,9 @@ var SymbolKinds;
     }
     SymbolKinds.toIcon = toIcon;
 })(SymbolKinds || (SymbolKinds = {}));
+/** @internal */
+class TextEdit {
+}
 class FoldingRangeKind {
     /**
      * Returns a {@link FoldingRangeKind} for the given value.
@@ -10793,7 +10859,7 @@ class LazyTokenizationSupport {
  */
 const languages_TokenizationRegistry = new TokenizationRegistry();
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10972,144 +11038,147 @@ var EditorOption;
     EditorOption[EditorOption["accessibilitySupport"] = 2] = "accessibilitySupport";
     EditorOption[EditorOption["accessibilityPageSize"] = 3] = "accessibilityPageSize";
     EditorOption[EditorOption["ariaLabel"] = 4] = "ariaLabel";
-    EditorOption[EditorOption["autoClosingBrackets"] = 5] = "autoClosingBrackets";
-    EditorOption[EditorOption["screenReaderAnnounceInlineSuggestion"] = 6] = "screenReaderAnnounceInlineSuggestion";
-    EditorOption[EditorOption["autoClosingDelete"] = 7] = "autoClosingDelete";
-    EditorOption[EditorOption["autoClosingOvertype"] = 8] = "autoClosingOvertype";
-    EditorOption[EditorOption["autoClosingQuotes"] = 9] = "autoClosingQuotes";
-    EditorOption[EditorOption["autoIndent"] = 10] = "autoIndent";
-    EditorOption[EditorOption["automaticLayout"] = 11] = "automaticLayout";
-    EditorOption[EditorOption["autoSurround"] = 12] = "autoSurround";
-    EditorOption[EditorOption["bracketPairColorization"] = 13] = "bracketPairColorization";
-    EditorOption[EditorOption["guides"] = 14] = "guides";
-    EditorOption[EditorOption["codeLens"] = 15] = "codeLens";
-    EditorOption[EditorOption["codeLensFontFamily"] = 16] = "codeLensFontFamily";
-    EditorOption[EditorOption["codeLensFontSize"] = 17] = "codeLensFontSize";
-    EditorOption[EditorOption["colorDecorators"] = 18] = "colorDecorators";
-    EditorOption[EditorOption["colorDecoratorsLimit"] = 19] = "colorDecoratorsLimit";
-    EditorOption[EditorOption["columnSelection"] = 20] = "columnSelection";
-    EditorOption[EditorOption["comments"] = 21] = "comments";
-    EditorOption[EditorOption["contextmenu"] = 22] = "contextmenu";
-    EditorOption[EditorOption["copyWithSyntaxHighlighting"] = 23] = "copyWithSyntaxHighlighting";
-    EditorOption[EditorOption["cursorBlinking"] = 24] = "cursorBlinking";
-    EditorOption[EditorOption["cursorSmoothCaretAnimation"] = 25] = "cursorSmoothCaretAnimation";
-    EditorOption[EditorOption["cursorStyle"] = 26] = "cursorStyle";
-    EditorOption[EditorOption["cursorSurroundingLines"] = 27] = "cursorSurroundingLines";
-    EditorOption[EditorOption["cursorSurroundingLinesStyle"] = 28] = "cursorSurroundingLinesStyle";
-    EditorOption[EditorOption["cursorWidth"] = 29] = "cursorWidth";
-    EditorOption[EditorOption["disableLayerHinting"] = 30] = "disableLayerHinting";
-    EditorOption[EditorOption["disableMonospaceOptimizations"] = 31] = "disableMonospaceOptimizations";
-    EditorOption[EditorOption["domReadOnly"] = 32] = "domReadOnly";
-    EditorOption[EditorOption["dragAndDrop"] = 33] = "dragAndDrop";
-    EditorOption[EditorOption["dropIntoEditor"] = 34] = "dropIntoEditor";
-    EditorOption[EditorOption["emptySelectionClipboard"] = 35] = "emptySelectionClipboard";
-    EditorOption[EditorOption["experimentalWhitespaceRendering"] = 36] = "experimentalWhitespaceRendering";
-    EditorOption[EditorOption["extraEditorClassName"] = 37] = "extraEditorClassName";
-    EditorOption[EditorOption["fastScrollSensitivity"] = 38] = "fastScrollSensitivity";
-    EditorOption[EditorOption["find"] = 39] = "find";
-    EditorOption[EditorOption["fixedOverflowWidgets"] = 40] = "fixedOverflowWidgets";
-    EditorOption[EditorOption["folding"] = 41] = "folding";
-    EditorOption[EditorOption["foldingStrategy"] = 42] = "foldingStrategy";
-    EditorOption[EditorOption["foldingHighlight"] = 43] = "foldingHighlight";
-    EditorOption[EditorOption["foldingImportsByDefault"] = 44] = "foldingImportsByDefault";
-    EditorOption[EditorOption["foldingMaximumRegions"] = 45] = "foldingMaximumRegions";
-    EditorOption[EditorOption["unfoldOnClickAfterEndOfLine"] = 46] = "unfoldOnClickAfterEndOfLine";
-    EditorOption[EditorOption["fontFamily"] = 47] = "fontFamily";
-    EditorOption[EditorOption["fontInfo"] = 48] = "fontInfo";
-    EditorOption[EditorOption["fontLigatures"] = 49] = "fontLigatures";
-    EditorOption[EditorOption["fontSize"] = 50] = "fontSize";
-    EditorOption[EditorOption["fontWeight"] = 51] = "fontWeight";
-    EditorOption[EditorOption["fontVariations"] = 52] = "fontVariations";
-    EditorOption[EditorOption["formatOnPaste"] = 53] = "formatOnPaste";
-    EditorOption[EditorOption["formatOnType"] = 54] = "formatOnType";
-    EditorOption[EditorOption["glyphMargin"] = 55] = "glyphMargin";
-    EditorOption[EditorOption["gotoLocation"] = 56] = "gotoLocation";
-    EditorOption[EditorOption["hideCursorInOverviewRuler"] = 57] = "hideCursorInOverviewRuler";
-    EditorOption[EditorOption["hover"] = 58] = "hover";
-    EditorOption[EditorOption["inDiffEditor"] = 59] = "inDiffEditor";
-    EditorOption[EditorOption["inlineSuggest"] = 60] = "inlineSuggest";
-    EditorOption[EditorOption["letterSpacing"] = 61] = "letterSpacing";
-    EditorOption[EditorOption["lightbulb"] = 62] = "lightbulb";
-    EditorOption[EditorOption["lineDecorationsWidth"] = 63] = "lineDecorationsWidth";
-    EditorOption[EditorOption["lineHeight"] = 64] = "lineHeight";
-    EditorOption[EditorOption["lineNumbers"] = 65] = "lineNumbers";
-    EditorOption[EditorOption["lineNumbersMinChars"] = 66] = "lineNumbersMinChars";
-    EditorOption[EditorOption["linkedEditing"] = 67] = "linkedEditing";
-    EditorOption[EditorOption["links"] = 68] = "links";
-    EditorOption[EditorOption["matchBrackets"] = 69] = "matchBrackets";
-    EditorOption[EditorOption["minimap"] = 70] = "minimap";
-    EditorOption[EditorOption["mouseStyle"] = 71] = "mouseStyle";
-    EditorOption[EditorOption["mouseWheelScrollSensitivity"] = 72] = "mouseWheelScrollSensitivity";
-    EditorOption[EditorOption["mouseWheelZoom"] = 73] = "mouseWheelZoom";
-    EditorOption[EditorOption["multiCursorMergeOverlapping"] = 74] = "multiCursorMergeOverlapping";
-    EditorOption[EditorOption["multiCursorModifier"] = 75] = "multiCursorModifier";
-    EditorOption[EditorOption["multiCursorPaste"] = 76] = "multiCursorPaste";
-    EditorOption[EditorOption["multiCursorLimit"] = 77] = "multiCursorLimit";
-    EditorOption[EditorOption["occurrencesHighlight"] = 78] = "occurrencesHighlight";
-    EditorOption[EditorOption["overviewRulerBorder"] = 79] = "overviewRulerBorder";
-    EditorOption[EditorOption["overviewRulerLanes"] = 80] = "overviewRulerLanes";
-    EditorOption[EditorOption["padding"] = 81] = "padding";
-    EditorOption[EditorOption["pasteAs"] = 82] = "pasteAs";
-    EditorOption[EditorOption["parameterHints"] = 83] = "parameterHints";
-    EditorOption[EditorOption["peekWidgetDefaultFocus"] = 84] = "peekWidgetDefaultFocus";
-    EditorOption[EditorOption["definitionLinkOpensInPeek"] = 85] = "definitionLinkOpensInPeek";
-    EditorOption[EditorOption["quickSuggestions"] = 86] = "quickSuggestions";
-    EditorOption[EditorOption["quickSuggestionsDelay"] = 87] = "quickSuggestionsDelay";
-    EditorOption[EditorOption["readOnly"] = 88] = "readOnly";
-    EditorOption[EditorOption["renameOnType"] = 89] = "renameOnType";
-    EditorOption[EditorOption["renderControlCharacters"] = 90] = "renderControlCharacters";
-    EditorOption[EditorOption["renderFinalNewline"] = 91] = "renderFinalNewline";
-    EditorOption[EditorOption["renderLineHighlight"] = 92] = "renderLineHighlight";
-    EditorOption[EditorOption["renderLineHighlightOnlyWhenFocus"] = 93] = "renderLineHighlightOnlyWhenFocus";
-    EditorOption[EditorOption["renderValidationDecorations"] = 94] = "renderValidationDecorations";
-    EditorOption[EditorOption["renderWhitespace"] = 95] = "renderWhitespace";
-    EditorOption[EditorOption["revealHorizontalRightPadding"] = 96] = "revealHorizontalRightPadding";
-    EditorOption[EditorOption["roundedSelection"] = 97] = "roundedSelection";
-    EditorOption[EditorOption["rulers"] = 98] = "rulers";
-    EditorOption[EditorOption["scrollbar"] = 99] = "scrollbar";
-    EditorOption[EditorOption["scrollBeyondLastColumn"] = 100] = "scrollBeyondLastColumn";
-    EditorOption[EditorOption["scrollBeyondLastLine"] = 101] = "scrollBeyondLastLine";
-    EditorOption[EditorOption["scrollPredominantAxis"] = 102] = "scrollPredominantAxis";
-    EditorOption[EditorOption["selectionClipboard"] = 103] = "selectionClipboard";
-    EditorOption[EditorOption["selectionHighlight"] = 104] = "selectionHighlight";
-    EditorOption[EditorOption["selectOnLineNumbers"] = 105] = "selectOnLineNumbers";
-    EditorOption[EditorOption["showFoldingControls"] = 106] = "showFoldingControls";
-    EditorOption[EditorOption["showUnused"] = 107] = "showUnused";
-    EditorOption[EditorOption["snippetSuggestions"] = 108] = "snippetSuggestions";
-    EditorOption[EditorOption["smartSelect"] = 109] = "smartSelect";
-    EditorOption[EditorOption["smoothScrolling"] = 110] = "smoothScrolling";
-    EditorOption[EditorOption["stickyScroll"] = 111] = "stickyScroll";
-    EditorOption[EditorOption["stickyTabStops"] = 112] = "stickyTabStops";
-    EditorOption[EditorOption["stopRenderingLineAfter"] = 113] = "stopRenderingLineAfter";
-    EditorOption[EditorOption["suggest"] = 114] = "suggest";
-    EditorOption[EditorOption["suggestFontSize"] = 115] = "suggestFontSize";
-    EditorOption[EditorOption["suggestLineHeight"] = 116] = "suggestLineHeight";
-    EditorOption[EditorOption["suggestOnTriggerCharacters"] = 117] = "suggestOnTriggerCharacters";
-    EditorOption[EditorOption["suggestSelection"] = 118] = "suggestSelection";
-    EditorOption[EditorOption["tabCompletion"] = 119] = "tabCompletion";
-    EditorOption[EditorOption["tabIndex"] = 120] = "tabIndex";
-    EditorOption[EditorOption["unicodeHighlighting"] = 121] = "unicodeHighlighting";
-    EditorOption[EditorOption["unusualLineTerminators"] = 122] = "unusualLineTerminators";
-    EditorOption[EditorOption["useShadowDOM"] = 123] = "useShadowDOM";
-    EditorOption[EditorOption["useTabStops"] = 124] = "useTabStops";
-    EditorOption[EditorOption["wordBreak"] = 125] = "wordBreak";
-    EditorOption[EditorOption["wordSeparators"] = 126] = "wordSeparators";
-    EditorOption[EditorOption["wordWrap"] = 127] = "wordWrap";
-    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 128] = "wordWrapBreakAfterCharacters";
-    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 129] = "wordWrapBreakBeforeCharacters";
-    EditorOption[EditorOption["wordWrapColumn"] = 130] = "wordWrapColumn";
-    EditorOption[EditorOption["wordWrapOverride1"] = 131] = "wordWrapOverride1";
-    EditorOption[EditorOption["wordWrapOverride2"] = 132] = "wordWrapOverride2";
-    EditorOption[EditorOption["wrappingIndent"] = 133] = "wrappingIndent";
-    EditorOption[EditorOption["wrappingStrategy"] = 134] = "wrappingStrategy";
-    EditorOption[EditorOption["showDeprecated"] = 135] = "showDeprecated";
-    EditorOption[EditorOption["inlayHints"] = 136] = "inlayHints";
-    EditorOption[EditorOption["editorClassName"] = 137] = "editorClassName";
-    EditorOption[EditorOption["pixelRatio"] = 138] = "pixelRatio";
-    EditorOption[EditorOption["tabFocusMode"] = 139] = "tabFocusMode";
-    EditorOption[EditorOption["layoutInfo"] = 140] = "layoutInfo";
-    EditorOption[EditorOption["wrappingInfo"] = 141] = "wrappingInfo";
-    EditorOption[EditorOption["defaultColorDecorators"] = 142] = "defaultColorDecorators";
+    EditorOption[EditorOption["ariaRequired"] = 5] = "ariaRequired";
+    EditorOption[EditorOption["autoClosingBrackets"] = 6] = "autoClosingBrackets";
+    EditorOption[EditorOption["screenReaderAnnounceInlineSuggestion"] = 7] = "screenReaderAnnounceInlineSuggestion";
+    EditorOption[EditorOption["autoClosingDelete"] = 8] = "autoClosingDelete";
+    EditorOption[EditorOption["autoClosingOvertype"] = 9] = "autoClosingOvertype";
+    EditorOption[EditorOption["autoClosingQuotes"] = 10] = "autoClosingQuotes";
+    EditorOption[EditorOption["autoIndent"] = 11] = "autoIndent";
+    EditorOption[EditorOption["automaticLayout"] = 12] = "automaticLayout";
+    EditorOption[EditorOption["autoSurround"] = 13] = "autoSurround";
+    EditorOption[EditorOption["bracketPairColorization"] = 14] = "bracketPairColorization";
+    EditorOption[EditorOption["guides"] = 15] = "guides";
+    EditorOption[EditorOption["codeLens"] = 16] = "codeLens";
+    EditorOption[EditorOption["codeLensFontFamily"] = 17] = "codeLensFontFamily";
+    EditorOption[EditorOption["codeLensFontSize"] = 18] = "codeLensFontSize";
+    EditorOption[EditorOption["colorDecorators"] = 19] = "colorDecorators";
+    EditorOption[EditorOption["colorDecoratorsLimit"] = 20] = "colorDecoratorsLimit";
+    EditorOption[EditorOption["columnSelection"] = 21] = "columnSelection";
+    EditorOption[EditorOption["comments"] = 22] = "comments";
+    EditorOption[EditorOption["contextmenu"] = 23] = "contextmenu";
+    EditorOption[EditorOption["copyWithSyntaxHighlighting"] = 24] = "copyWithSyntaxHighlighting";
+    EditorOption[EditorOption["cursorBlinking"] = 25] = "cursorBlinking";
+    EditorOption[EditorOption["cursorSmoothCaretAnimation"] = 26] = "cursorSmoothCaretAnimation";
+    EditorOption[EditorOption["cursorStyle"] = 27] = "cursorStyle";
+    EditorOption[EditorOption["cursorSurroundingLines"] = 28] = "cursorSurroundingLines";
+    EditorOption[EditorOption["cursorSurroundingLinesStyle"] = 29] = "cursorSurroundingLinesStyle";
+    EditorOption[EditorOption["cursorWidth"] = 30] = "cursorWidth";
+    EditorOption[EditorOption["disableLayerHinting"] = 31] = "disableLayerHinting";
+    EditorOption[EditorOption["disableMonospaceOptimizations"] = 32] = "disableMonospaceOptimizations";
+    EditorOption[EditorOption["domReadOnly"] = 33] = "domReadOnly";
+    EditorOption[EditorOption["dragAndDrop"] = 34] = "dragAndDrop";
+    EditorOption[EditorOption["dropIntoEditor"] = 35] = "dropIntoEditor";
+    EditorOption[EditorOption["emptySelectionClipboard"] = 36] = "emptySelectionClipboard";
+    EditorOption[EditorOption["experimentalWhitespaceRendering"] = 37] = "experimentalWhitespaceRendering";
+    EditorOption[EditorOption["extraEditorClassName"] = 38] = "extraEditorClassName";
+    EditorOption[EditorOption["fastScrollSensitivity"] = 39] = "fastScrollSensitivity";
+    EditorOption[EditorOption["find"] = 40] = "find";
+    EditorOption[EditorOption["fixedOverflowWidgets"] = 41] = "fixedOverflowWidgets";
+    EditorOption[EditorOption["folding"] = 42] = "folding";
+    EditorOption[EditorOption["foldingStrategy"] = 43] = "foldingStrategy";
+    EditorOption[EditorOption["foldingHighlight"] = 44] = "foldingHighlight";
+    EditorOption[EditorOption["foldingImportsByDefault"] = 45] = "foldingImportsByDefault";
+    EditorOption[EditorOption["foldingMaximumRegions"] = 46] = "foldingMaximumRegions";
+    EditorOption[EditorOption["unfoldOnClickAfterEndOfLine"] = 47] = "unfoldOnClickAfterEndOfLine";
+    EditorOption[EditorOption["fontFamily"] = 48] = "fontFamily";
+    EditorOption[EditorOption["fontInfo"] = 49] = "fontInfo";
+    EditorOption[EditorOption["fontLigatures"] = 50] = "fontLigatures";
+    EditorOption[EditorOption["fontSize"] = 51] = "fontSize";
+    EditorOption[EditorOption["fontWeight"] = 52] = "fontWeight";
+    EditorOption[EditorOption["fontVariations"] = 53] = "fontVariations";
+    EditorOption[EditorOption["formatOnPaste"] = 54] = "formatOnPaste";
+    EditorOption[EditorOption["formatOnType"] = 55] = "formatOnType";
+    EditorOption[EditorOption["glyphMargin"] = 56] = "glyphMargin";
+    EditorOption[EditorOption["gotoLocation"] = 57] = "gotoLocation";
+    EditorOption[EditorOption["hideCursorInOverviewRuler"] = 58] = "hideCursorInOverviewRuler";
+    EditorOption[EditorOption["hover"] = 59] = "hover";
+    EditorOption[EditorOption["inDiffEditor"] = 60] = "inDiffEditor";
+    EditorOption[EditorOption["inlineSuggest"] = 61] = "inlineSuggest";
+    EditorOption[EditorOption["letterSpacing"] = 62] = "letterSpacing";
+    EditorOption[EditorOption["lightbulb"] = 63] = "lightbulb";
+    EditorOption[EditorOption["lineDecorationsWidth"] = 64] = "lineDecorationsWidth";
+    EditorOption[EditorOption["lineHeight"] = 65] = "lineHeight";
+    EditorOption[EditorOption["lineNumbers"] = 66] = "lineNumbers";
+    EditorOption[EditorOption["lineNumbersMinChars"] = 67] = "lineNumbersMinChars";
+    EditorOption[EditorOption["linkedEditing"] = 68] = "linkedEditing";
+    EditorOption[EditorOption["links"] = 69] = "links";
+    EditorOption[EditorOption["matchBrackets"] = 70] = "matchBrackets";
+    EditorOption[EditorOption["minimap"] = 71] = "minimap";
+    EditorOption[EditorOption["mouseStyle"] = 72] = "mouseStyle";
+    EditorOption[EditorOption["mouseWheelScrollSensitivity"] = 73] = "mouseWheelScrollSensitivity";
+    EditorOption[EditorOption["mouseWheelZoom"] = 74] = "mouseWheelZoom";
+    EditorOption[EditorOption["multiCursorMergeOverlapping"] = 75] = "multiCursorMergeOverlapping";
+    EditorOption[EditorOption["multiCursorModifier"] = 76] = "multiCursorModifier";
+    EditorOption[EditorOption["multiCursorPaste"] = 77] = "multiCursorPaste";
+    EditorOption[EditorOption["multiCursorLimit"] = 78] = "multiCursorLimit";
+    EditorOption[EditorOption["occurrencesHighlight"] = 79] = "occurrencesHighlight";
+    EditorOption[EditorOption["overviewRulerBorder"] = 80] = "overviewRulerBorder";
+    EditorOption[EditorOption["overviewRulerLanes"] = 81] = "overviewRulerLanes";
+    EditorOption[EditorOption["padding"] = 82] = "padding";
+    EditorOption[EditorOption["pasteAs"] = 83] = "pasteAs";
+    EditorOption[EditorOption["parameterHints"] = 84] = "parameterHints";
+    EditorOption[EditorOption["peekWidgetDefaultFocus"] = 85] = "peekWidgetDefaultFocus";
+    EditorOption[EditorOption["definitionLinkOpensInPeek"] = 86] = "definitionLinkOpensInPeek";
+    EditorOption[EditorOption["quickSuggestions"] = 87] = "quickSuggestions";
+    EditorOption[EditorOption["quickSuggestionsDelay"] = 88] = "quickSuggestionsDelay";
+    EditorOption[EditorOption["readOnly"] = 89] = "readOnly";
+    EditorOption[EditorOption["readOnlyMessage"] = 90] = "readOnlyMessage";
+    EditorOption[EditorOption["renameOnType"] = 91] = "renameOnType";
+    EditorOption[EditorOption["renderControlCharacters"] = 92] = "renderControlCharacters";
+    EditorOption[EditorOption["renderFinalNewline"] = 93] = "renderFinalNewline";
+    EditorOption[EditorOption["renderLineHighlight"] = 94] = "renderLineHighlight";
+    EditorOption[EditorOption["renderLineHighlightOnlyWhenFocus"] = 95] = "renderLineHighlightOnlyWhenFocus";
+    EditorOption[EditorOption["renderValidationDecorations"] = 96] = "renderValidationDecorations";
+    EditorOption[EditorOption["renderWhitespace"] = 97] = "renderWhitespace";
+    EditorOption[EditorOption["revealHorizontalRightPadding"] = 98] = "revealHorizontalRightPadding";
+    EditorOption[EditorOption["roundedSelection"] = 99] = "roundedSelection";
+    EditorOption[EditorOption["rulers"] = 100] = "rulers";
+    EditorOption[EditorOption["scrollbar"] = 101] = "scrollbar";
+    EditorOption[EditorOption["scrollBeyondLastColumn"] = 102] = "scrollBeyondLastColumn";
+    EditorOption[EditorOption["scrollBeyondLastLine"] = 103] = "scrollBeyondLastLine";
+    EditorOption[EditorOption["scrollPredominantAxis"] = 104] = "scrollPredominantAxis";
+    EditorOption[EditorOption["selectionClipboard"] = 105] = "selectionClipboard";
+    EditorOption[EditorOption["selectionHighlight"] = 106] = "selectionHighlight";
+    EditorOption[EditorOption["selectOnLineNumbers"] = 107] = "selectOnLineNumbers";
+    EditorOption[EditorOption["showFoldingControls"] = 108] = "showFoldingControls";
+    EditorOption[EditorOption["showUnused"] = 109] = "showUnused";
+    EditorOption[EditorOption["snippetSuggestions"] = 110] = "snippetSuggestions";
+    EditorOption[EditorOption["smartSelect"] = 111] = "smartSelect";
+    EditorOption[EditorOption["smoothScrolling"] = 112] = "smoothScrolling";
+    EditorOption[EditorOption["stickyScroll"] = 113] = "stickyScroll";
+    EditorOption[EditorOption["stickyTabStops"] = 114] = "stickyTabStops";
+    EditorOption[EditorOption["stopRenderingLineAfter"] = 115] = "stopRenderingLineAfter";
+    EditorOption[EditorOption["suggest"] = 116] = "suggest";
+    EditorOption[EditorOption["suggestFontSize"] = 117] = "suggestFontSize";
+    EditorOption[EditorOption["suggestLineHeight"] = 118] = "suggestLineHeight";
+    EditorOption[EditorOption["suggestOnTriggerCharacters"] = 119] = "suggestOnTriggerCharacters";
+    EditorOption[EditorOption["suggestSelection"] = 120] = "suggestSelection";
+    EditorOption[EditorOption["tabCompletion"] = 121] = "tabCompletion";
+    EditorOption[EditorOption["tabIndex"] = 122] = "tabIndex";
+    EditorOption[EditorOption["unicodeHighlighting"] = 123] = "unicodeHighlighting";
+    EditorOption[EditorOption["unusualLineTerminators"] = 124] = "unusualLineTerminators";
+    EditorOption[EditorOption["useShadowDOM"] = 125] = "useShadowDOM";
+    EditorOption[EditorOption["useTabStops"] = 126] = "useTabStops";
+    EditorOption[EditorOption["wordBreak"] = 127] = "wordBreak";
+    EditorOption[EditorOption["wordSeparators"] = 128] = "wordSeparators";
+    EditorOption[EditorOption["wordWrap"] = 129] = "wordWrap";
+    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 130] = "wordWrapBreakAfterCharacters";
+    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 131] = "wordWrapBreakBeforeCharacters";
+    EditorOption[EditorOption["wordWrapColumn"] = 132] = "wordWrapColumn";
+    EditorOption[EditorOption["wordWrapOverride1"] = 133] = "wordWrapOverride1";
+    EditorOption[EditorOption["wordWrapOverride2"] = 134] = "wordWrapOverride2";
+    EditorOption[EditorOption["wrappingIndent"] = 135] = "wrappingIndent";
+    EditorOption[EditorOption["wrappingStrategy"] = 136] = "wrappingStrategy";
+    EditorOption[EditorOption["showDeprecated"] = 137] = "showDeprecated";
+    EditorOption[EditorOption["inlayHints"] = 138] = "inlayHints";
+    EditorOption[EditorOption["editorClassName"] = 139] = "editorClassName";
+    EditorOption[EditorOption["pixelRatio"] = 140] = "pixelRatio";
+    EditorOption[EditorOption["tabFocusMode"] = 141] = "tabFocusMode";
+    EditorOption[EditorOption["layoutInfo"] = 142] = "layoutInfo";
+    EditorOption[EditorOption["wrappingInfo"] = 143] = "wrappingInfo";
+    EditorOption[EditorOption["defaultColorDecorators"] = 144] = "defaultColorDecorators";
+    EditorOption[EditorOption["colorDecoratorsActivatedOn"] = 145] = "colorDecoratorsActivatedOn";
 })(EditorOption || (EditorOption = {}));
 /**
  * End of line character preference.
@@ -11716,7 +11785,7 @@ var WrappingIndent;
     WrappingIndent[WrappingIndent["DeepIndent"] = 3] = "DeepIndent";
 })(WrappingIndent || (WrappingIndent = {}));
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/services/editorBaseApi.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/services/editorBaseApi.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -11758,7 +11827,7 @@ function createMonacoBaseAPI() {
     };
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/wordCharacterClassifier.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/wordCharacterClassifier.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -11785,7 +11854,7 @@ function wordCharacterClassifier_once(computeFn) {
 }
 const wordCharacterClassifier_getMapForWordSeparators = wordCharacterClassifier_once((input) => new WordCharacterClassifier(input));
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/model.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/model.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -11927,7 +11996,7 @@ function shouldSynchronizeModel(model) {
     return (!model.isTooLargeForSyncing() && !model.isForSimpleWidget);
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/model/textModelSearch.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/model/textModelSearch.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12381,7 +12450,7 @@ class Searcher {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/assert.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/assert.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12434,7 +12503,7 @@ function checkAdjacentItems(items, predicate) {
     return true;
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/services/unicodeTextModelHighlighter.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/services/unicodeTextModelHighlighter.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12621,7 +12690,7 @@ function isAllowedInvisibleCharacter(character) {
     return character === ' ' || character === '\n' || character === '\t';
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/lineRange.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/lineRange.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12634,6 +12703,26 @@ function isAllowedInvisibleCharacter(character) {
 class LineRange {
     static fromRange(range) {
         return new LineRange(range.startLineNumber, range.endLineNumber);
+    }
+    static subtract(a, b) {
+        if (!b) {
+            return [a];
+        }
+        if (a.startLineNumber < b.startLineNumber && b.endLineNumberExclusive < a.endLineNumberExclusive) {
+            return [
+                new LineRange(a.startLineNumber, b.startLineNumber),
+                new LineRange(b.endLineNumberExclusive, a.endLineNumberExclusive)
+            ];
+        }
+        else if (b.startLineNumber <= a.startLineNumber && a.endLineNumberExclusive <= b.endLineNumberExclusive) {
+            return [];
+        }
+        else if (b.endLineNumberExclusive < a.endLineNumberExclusive) {
+            return [new LineRange(Math.max(b.endLineNumberExclusive, a.startLineNumber), a.endLineNumberExclusive)];
+        }
+        else {
+            return [new LineRange(a.startLineNumber, Math.min(b.startLineNumber, a.endLineNumberExclusive))];
+        }
     }
     /**
      * @param lineRanges An array of sorted line ranges.
@@ -12708,6 +12797,12 @@ class LineRange {
     static ofLength(startLineNumber, length) {
         return new LineRange(startLineNumber, startLineNumber + length);
     }
+    /**
+     * @internal
+     */
+    static deserialize(lineRange) {
+        return new LineRange(lineRange[0], lineRange[1]);
+    }
     constructor(startLineNumber, endLineNumberExclusive) {
         if (startLineNumber > endLineNumberExclusive) {
             throw new BugIndicatingError(`startLineNumber ${startLineNumber} cannot be after endLineNumberExclusive ${endLineNumberExclusive}`);
@@ -12778,9 +12873,30 @@ class LineRange {
     toExclusiveRange() {
         return new range_Range(this.startLineNumber, 1, this.endLineNumberExclusive, 1);
     }
+    mapToLineArray(f) {
+        const result = [];
+        for (let lineNumber = this.startLineNumber; lineNumber < this.endLineNumberExclusive; lineNumber++) {
+            result.push(f(lineNumber));
+        }
+        return result;
+    }
+    forEach(f) {
+        for (let lineNumber = this.startLineNumber; lineNumber < this.endLineNumberExclusive; lineNumber++) {
+            f(lineNumber);
+        }
+    }
+    /**
+     * @internal
+     */
+    serialize() {
+        return [this.startLineNumber, this.endLineNumberExclusive];
+    }
+    includes(lineNumber) {
+        return this.startLineNumber <= lineNumber && lineNumber < this.endLineNumberExclusive;
+    }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/linesDiffComputer.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/linesDiffComputer.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12789,11 +12905,17 @@ class LineRange {
 class LinesDiff {
     constructor(changes, 
     /**
+     * Sorted by original line ranges.
+     * The original line ranges and the modified line ranges must be disjoint (but can be touching).
+     */
+    moves, 
+    /**
      * Indicates if the time out was reached.
      * In that case, the diffs might be an approximation and the user should be asked to rerun the diff with more time.
      */
     hitTimeout) {
         this.changes = changes;
+        this.moves = moves;
         this.hitTimeout = hitTimeout;
     }
 }
@@ -12830,6 +12952,10 @@ class LineRangeMapping {
     get changedLineCount() {
         return Math.max(this.originalRange.length, this.modifiedRange.length);
     }
+    flip() {
+        var _a;
+        return new LineRangeMapping(this.modifiedRange, this.originalRange, (_a = this.innerChanges) === null || _a === void 0 ? void 0 : _a.map(c => c.flip()));
+    }
 }
 /**
  * Maps a range in the original text model to a range in the modified text model.
@@ -12842,9 +12968,34 @@ class RangeMapping {
     toString() {
         return `{${this.originalRange.toString()}->${this.modifiedRange.toString()}}`;
     }
+    flip() {
+        return new RangeMapping(this.modifiedRange, this.originalRange);
+    }
+}
+// TODO@hediet: Make LineRangeMapping extend from this!
+class SimpleLineRangeMapping {
+    constructor(original, modified) {
+        this.original = original;
+        this.modified = modified;
+    }
+    toString() {
+        return `{${this.original.toString()}->${this.modified.toString()}}`;
+    }
+    flip() {
+        return new SimpleLineRangeMapping(this.modified, this.original);
+    }
+}
+class MovedText {
+    constructor(lineRangeMapping, changes) {
+        this.lineRangeMapping = lineRangeMapping;
+        this.changes = changes;
+    }
+    flip() {
+        return new MovedText(this.lineRangeMapping.flip(), this.changes.map(c => c.flip()));
+    }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/smartLinesDiffComputer.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/smartLinesDiffComputer.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12905,7 +13056,7 @@ class SmartLinesDiffComputer {
                 m1.originalRange.endLineNumberExclusive < m2.originalRange.startLineNumber &&
                 m1.modifiedRange.endLineNumberExclusive < m2.modifiedRange.startLineNumber);
         });
-        return new LinesDiff(changes, result.quitEarly);
+        return new LinesDiff(changes, [], result.quitEarly);
     }
 }
 function computeDiff(originalSequence, modifiedSequence, continueProcessingPredicate, pretty) {
@@ -13311,7 +13462,7 @@ function createContinueProcessingPredicate(maximumRuntime) {
     };
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/core/offsetRange.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/core/offsetRange.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13370,6 +13521,9 @@ class OffsetRange {
     containsRange(other) {
         return this.start <= other.start && other.endExclusive <= this.endExclusive;
     }
+    contains(offset) {
+        return this.start <= offset && offset < this.endExclusive;
+    }
     /**
      * for all numbers n: range1.contains(n) or range2.contains(n) => range1.join(range2).contains(n)
      * The joined range is the smallest range that contains both ranges.
@@ -13393,7 +13547,7 @@ class OffsetRange {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/diffAlgorithm.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/diffAlgorithm.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13431,6 +13585,12 @@ class SequenceDiff {
     join(other) {
         return new SequenceDiff(this.seq1Range.join(other.seq1Range), this.seq2Range.join(other.seq2Range));
     }
+    delta(offset) {
+        if (offset === 0) {
+            return this;
+        }
+        return new SequenceDiff(this.seq1Range.delta(offset), this.seq2Range.delta(offset));
+    }
 }
 class InfiniteTimeout {
     isValid() {
@@ -13459,7 +13619,7 @@ class DateTimeout {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/utils.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/utils.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13479,7 +13639,7 @@ class Array2D {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/dynamicProgrammingDiffing.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/dynamicProgrammingDiffing.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13579,7 +13739,7 @@ class DynamicProgrammingDiffing {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/joinSequenceDiffs.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/joinSequenceDiffs.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13609,6 +13769,63 @@ function smoothenSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
     }
     return result;
 }
+function removeRandomMatches(sequence1, sequence2, sequenceDiffs) {
+    let diffs = sequenceDiffs;
+    if (diffs.length === 0) {
+        return diffs;
+    }
+    let counter = 0;
+    let shouldRepeat;
+    do {
+        shouldRepeat = false;
+        const result = [
+            diffs[0]
+        ];
+        for (let i = 1; i < diffs.length; i++) {
+            const cur = diffs[i];
+            const lastResult = result[result.length - 1];
+            function shouldJoinDiffs(before, after) {
+                const unchangedRange = new OffsetRange(lastResult.seq1Range.endExclusive, cur.seq1Range.start);
+                const unchangedLineCount = sequence1.countLinesIn(unchangedRange);
+                if (unchangedLineCount > 5 || unchangedRange.length > 500) {
+                    return false;
+                }
+                const unchangedText = sequence1.getText(unchangedRange).trim();
+                if (unchangedText.length > 20 || unchangedText.split(/\r\n|\r|\n/).length > 1) {
+                    return false;
+                }
+                const beforeLineCount1 = sequence1.countLinesIn(before.seq1Range);
+                const beforeSeq1Length = before.seq1Range.length;
+                const beforeLineCount2 = sequence2.countLinesIn(before.seq2Range);
+                const beforeSeq2Length = before.seq2Range.length;
+                const afterLineCount1 = sequence1.countLinesIn(after.seq1Range);
+                const afterSeq1Length = after.seq1Range.length;
+                const afterLineCount2 = sequence2.countLinesIn(after.seq2Range);
+                const afterSeq2Length = after.seq2Range.length;
+                // TODO: Maybe a neural net can be used to derive the result from these numbers
+                const max = 2 * 40 + 50;
+                function cap(v) {
+                    return Math.min(v, max);
+                }
+                if (Math.pow(Math.pow(cap(beforeLineCount1 * 40 + beforeSeq1Length), 1.5) + Math.pow(cap(beforeLineCount2 * 40 + beforeSeq2Length), 1.5), 1.5)
+                    + Math.pow(Math.pow(cap(afterLineCount1 * 40 + afterSeq1Length), 1.5) + Math.pow(cap(afterLineCount2 * 40 + afterSeq2Length), 1.5), 1.5) > (Math.pow((Math.pow(max, 1.5)), 1.5)) * 1.3) {
+                    return true;
+                }
+                return false;
+            }
+            const shouldJoin = shouldJoinDiffs(lastResult, cur);
+            if (shouldJoin) {
+                shouldRepeat = true;
+                result[result.length - 1] = result[result.length - 1].join(cur);
+            }
+            else {
+                result.push(cur);
+            }
+        }
+        diffs = result;
+    } while (counter++ < 10 && shouldRepeat);
+    return diffs;
+}
 /**
  * This function fixes issues like this:
  * ```
@@ -13622,31 +13839,63 @@ function smoothenSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
  * Improved diff: [{Add ", Foo" after Bar}]
  */
 function joinSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
-    const result = [];
-    if (sequenceDiffs.length > 0) {
-        result.push(sequenceDiffs[0]);
+    if (sequenceDiffs.length === 0) {
+        return sequenceDiffs;
     }
+    const result = [];
+    result.push(sequenceDiffs[0]);
+    // First move them all to the left as much as possible and join them if possible
     for (let i = 1; i < sequenceDiffs.length; i++) {
-        const lastResult = result[result.length - 1];
-        const cur = sequenceDiffs[i];
-        if (cur.seq1Range.isEmpty) {
-            let all = true;
-            const length = cur.seq1Range.start - lastResult.seq1Range.endExclusive;
-            for (let i = 1; i <= length; i++) {
-                if (sequence2.getElement(cur.seq2Range.start - i) !== sequence2.getElement(cur.seq2Range.endExclusive - i)) {
-                    all = false;
+        const prevResult = result[result.length - 1];
+        let cur = sequenceDiffs[i];
+        if (cur.seq1Range.isEmpty || cur.seq2Range.isEmpty) {
+            const length = cur.seq1Range.start - prevResult.seq1Range.endExclusive;
+            let d;
+            for (d = 1; d <= length; d++) {
+                if (sequence1.getElement(cur.seq1Range.start - d) !== sequence1.getElement(cur.seq1Range.endExclusive - d) ||
+                    sequence2.getElement(cur.seq2Range.start - d) !== sequence2.getElement(cur.seq2Range.endExclusive - d)) {
                     break;
                 }
             }
-            if (all) {
+            d--;
+            if (d === length) {
                 // Merge previous and current diff
-                result[result.length - 1] = new SequenceDiff(lastResult.seq1Range, new OffsetRange(lastResult.seq2Range.start, cur.seq2Range.endExclusive - length));
+                result[result.length - 1] = new SequenceDiff(new OffsetRange(prevResult.seq1Range.start, cur.seq1Range.endExclusive - length), new OffsetRange(prevResult.seq2Range.start, cur.seq2Range.endExclusive - length));
                 continue;
             }
+            cur = cur.delta(-d);
         }
         result.push(cur);
     }
-    return result;
+    const result2 = [];
+    // Then move them all to the right and join them again if possible
+    for (let i = 0; i < result.length - 1; i++) {
+        const nextResult = result[i + 1];
+        let cur = result[i];
+        if (cur.seq1Range.isEmpty || cur.seq2Range.isEmpty) {
+            const length = nextResult.seq1Range.start - cur.seq1Range.endExclusive;
+            let d;
+            for (d = 0; d < length; d++) {
+                if (sequence1.getElement(cur.seq1Range.start + d) !== sequence1.getElement(cur.seq1Range.endExclusive + d) ||
+                    sequence2.getElement(cur.seq2Range.start + d) !== sequence2.getElement(cur.seq2Range.endExclusive + d)) {
+                    break;
+                }
+            }
+            if (d === length) {
+                // Merge previous and current diff, write to result!
+                result[i + 1] = new SequenceDiff(new OffsetRange(cur.seq1Range.start + length, nextResult.seq1Range.endExclusive), new OffsetRange(cur.seq2Range.start + length, nextResult.seq2Range.endExclusive));
+                continue;
+            }
+            if (d > 0) {
+                cur = cur.delta(d);
+            }
+        }
+        result2.push(cur);
+    }
+    if (result.length > 0) {
+        result2.push(result[result.length - 1]);
+    }
+    return result2;
 }
 // align character level diffs at whitespace characters
 // import { IBar } from "foo";
@@ -13666,32 +13915,34 @@ function shiftSequenceDiffs(sequence1, sequence2, sequenceDiffs) {
         return sequenceDiffs;
     }
     for (let i = 0; i < sequenceDiffs.length; i++) {
+        const prevDiff = (i > 0 ? sequenceDiffs[i - 1] : undefined);
         const diff = sequenceDiffs[i];
+        const nextDiff = (i + 1 < sequenceDiffs.length ? sequenceDiffs[i + 1] : undefined);
+        const seq1ValidRange = new OffsetRange(prevDiff ? prevDiff.seq1Range.start + 1 : 0, nextDiff ? nextDiff.seq1Range.endExclusive - 1 : sequence1.length);
+        const seq2ValidRange = new OffsetRange(prevDiff ? prevDiff.seq2Range.start + 1 : 0, nextDiff ? nextDiff.seq2Range.endExclusive - 1 : sequence2.length);
         if (diff.seq1Range.isEmpty) {
-            const seq2PrevEndExclusive = (i > 0 ? sequenceDiffs[i - 1].seq2Range.endExclusive : -1);
-            const seq2NextStart = (i + 1 < sequenceDiffs.length ? sequenceDiffs[i + 1].seq2Range.start : sequence2.length);
-            sequenceDiffs[i] = shiftDiffToBetterPosition(diff, sequence1, sequence2, seq2NextStart, seq2PrevEndExclusive);
+            sequenceDiffs[i] = shiftDiffToBetterPosition(diff, sequence1, sequence2, seq1ValidRange, seq2ValidRange);
         }
         else if (diff.seq2Range.isEmpty) {
-            const seq1PrevEndExclusive = (i > 0 ? sequenceDiffs[i - 1].seq1Range.endExclusive : -1);
-            const seq1NextStart = (i + 1 < sequenceDiffs.length ? sequenceDiffs[i + 1].seq1Range.start : sequence1.length);
-            sequenceDiffs[i] = shiftDiffToBetterPosition(diff.reverse(), sequence2, sequence1, seq1NextStart, seq1PrevEndExclusive).reverse();
+            sequenceDiffs[i] = shiftDiffToBetterPosition(diff.reverse(), sequence2, sequence1, seq2ValidRange, seq1ValidRange).reverse();
         }
     }
     return sequenceDiffs;
 }
-function shiftDiffToBetterPosition(diff, sequence1, sequence2, seq2NextStart, seq2PrevEndExclusive) {
-    const maxShiftLimit = 20; // To prevent performance issues
+function shiftDiffToBetterPosition(diff, sequence1, sequence2, seq1ValidRange, seq2ValidRange) {
+    const maxShiftLimit = 100; // To prevent performance issues
     // don't touch previous or next!
     let deltaBefore = 1;
-    while (diff.seq2Range.start - deltaBefore > seq2PrevEndExclusive &&
+    while (diff.seq1Range.start - deltaBefore >= seq1ValidRange.start &&
+        diff.seq2Range.start - deltaBefore >= seq2ValidRange.start &&
         sequence2.getElement(diff.seq2Range.start - deltaBefore) ===
             sequence2.getElement(diff.seq2Range.endExclusive - deltaBefore) && deltaBefore < maxShiftLimit) {
         deltaBefore++;
     }
     deltaBefore--;
     let deltaAfter = 0;
-    while (diff.seq2Range.start + deltaAfter < seq2NextStart &&
+    while (diff.seq1Range.start + deltaAfter < seq1ValidRange.endExclusive &&
+        diff.seq2Range.endExclusive + deltaAfter < seq2ValidRange.endExclusive &&
         sequence2.getElement(diff.seq2Range.start + deltaAfter) ===
             sequence2.getElement(diff.seq2Range.endExclusive + deltaAfter) && deltaAfter < maxShiftLimit) {
         deltaAfter++;
@@ -13714,13 +13965,10 @@ function shiftDiffToBetterPosition(diff, sequence1, sequence2, seq2NextStart, se
             bestDelta = delta;
         }
     }
-    if (bestDelta !== 0) {
-        return new SequenceDiff(diff.seq1Range.delta(bestDelta), diff.seq2Range.delta(bestDelta));
-    }
-    return diff;
+    return diff.delta(bestDelta);
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/myersDiffAlgorithm.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/algorithms/myersDiffAlgorithm.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13755,14 +14003,23 @@ class MyersDiffAlgorithm {
         let k = 0;
         loop: while (true) {
             d++;
-            for (k = -d; k <= d; k += 2) {
-                if (!timeout.isValid()) {
-                    return DiffAlgorithmResult.trivialTimedOut(seq1, seq2);
-                }
-                const maxXofDLineTop = k === d ? -1 : V.get(k + 1); // We take a vertical non-diagonal
-                const maxXofDLineLeft = k === -d ? -1 : V.get(k - 1) + 1; // We take a horizontal non-diagonal (+1 x)
+            if (!timeout.isValid()) {
+                return DiffAlgorithmResult.trivialTimedOut(seq1, seq2);
+            }
+            // The paper has `for (k = -d; k <= d; k += 2)`, but we can ignore diagonals that cannot influence the result.
+            const lowerBound = -Math.min(d, seq2.length + (d % 2));
+            const upperBound = Math.min(d, seq1.length + (d % 2));
+            for (k = lowerBound; k <= upperBound; k += 2) {
+                // We can use the X values of (d-1)-lines to compute X value of the longest d-lines.
+                const maxXofDLineTop = k === upperBound ? -1 : V.get(k + 1); // We take a vertical non-diagonal (add a symbol in seq1)
+                const maxXofDLineLeft = k === lowerBound ? -1 : V.get(k - 1) + 1; // We take a horizontal non-diagonal (+1 x) (delete a symbol in seq1)
                 const x = Math.min(Math.max(maxXofDLineTop, maxXofDLineLeft), seq1.length);
                 const y = x - k;
+                if (x > seq1.length || y > seq2.length) {
+                    // This diagonal is irrelevant for the result.
+                    // TODO: Don't pay the cost for this in the next iteration.
+                    continue;
+                }
                 const newMaxX = getXAfterSnake(x, y);
                 V.set(k, newMaxX);
                 const lastPath = x === maxXofDLineTop ? paths.get(k + 1) : paths.get(k - 1);
@@ -13866,7 +14123,7 @@ class FastArrayNegativeIndices {
     }
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/standardLinesDiffComputer.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/standardLinesDiffComputer.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13887,6 +14144,17 @@ class StandardLinesDiffComputer {
         this.myersDiffingAlgorithm = new MyersDiffAlgorithm();
     }
     computeDiff(originalLines, modifiedLines, options) {
+        if (originalLines.length === 1 && originalLines[0].length === 0 || modifiedLines.length === 1 && modifiedLines[0].length === 0) {
+            return {
+                changes: [
+                    new LineRangeMapping(new LineRange(1, originalLines.length + 1), new LineRange(1, modifiedLines.length + 1), [
+                        new RangeMapping(new range_Range(1, 1, originalLines.length, originalLines[0].length + 1), new range_Range(1, 1, modifiedLines.length, modifiedLines[0].length + 1))
+                    ])
+                ],
+                hitTimeout: false,
+                moves: [],
+            };
+        }
         const timeout = options.maxComputationTimeMs === 0 ? InfiniteTimeout.instance : new DateTimeout(options.maxComputationTimeMs);
         const considerWhitespaceChanges = !options.ignoreTrimWhitespace;
         const perfectHashes = new Map();
@@ -13954,19 +14222,84 @@ class StandardLinesDiffComputer {
         }
         scanForWhitespaceChanges(originalLines.length - seq1LastStart);
         const changes = lineRangeMappingFromRangeMappings(alignments, originalLines, modifiedLines);
-        return new LinesDiff(changes, hitTimeout);
+        const moves = [];
+        if (options.computeMoves) {
+            const deletions = changes
+                .filter(c => c.modifiedRange.isEmpty && c.originalRange.length >= 3)
+                .map(d => new LineRangeFragment(d.originalRange, originalLines));
+            const insertions = new Set(changes
+                .filter(c => c.originalRange.isEmpty && c.modifiedRange.length >= 3)
+                .map(d => new LineRangeFragment(d.modifiedRange, modifiedLines)));
+            for (const deletion of deletions) {
+                let highestSimilarity = -1;
+                let best;
+                for (const insertion of insertions) {
+                    const similarity = deletion.computeSimilarity(insertion);
+                    if (similarity > highestSimilarity) {
+                        highestSimilarity = similarity;
+                        best = insertion;
+                    }
+                }
+                if (highestSimilarity > 0.90 && best) {
+                    const moveChanges = this.refineDiff(originalLines, modifiedLines, new SequenceDiff(new OffsetRange(deletion.range.startLineNumber - 1, deletion.range.endLineNumberExclusive - 1), new OffsetRange(best.range.startLineNumber - 1, best.range.endLineNumberExclusive - 1)), timeout, considerWhitespaceChanges);
+                    const mappings = lineRangeMappingFromRangeMappings(moveChanges.mappings, originalLines, modifiedLines, true);
+                    insertions.delete(best);
+                    moves.push(new MovedText(new SimpleLineRangeMapping(deletion.range, best.range), mappings));
+                }
+            }
+        }
+        // Make sure all ranges are valid
+        assertFn(() => {
+            function validatePosition(pos, lines) {
+                if (pos.lineNumber < 1 || pos.lineNumber > lines.length) {
+                    return false;
+                }
+                const line = lines[pos.lineNumber - 1];
+                if (pos.column < 1 || pos.column > line.length + 1) {
+                    return false;
+                }
+                return true;
+            }
+            function validateRange(range, lines) {
+                if (range.startLineNumber < 1 || range.startLineNumber > lines.length + 1) {
+                    return false;
+                }
+                if (range.endLineNumberExclusive < 1 || range.endLineNumberExclusive > lines.length + 1) {
+                    return false;
+                }
+                return true;
+            }
+            for (const c of changes) {
+                if (!c.innerChanges) {
+                    return false;
+                }
+                for (const ic of c.innerChanges) {
+                    const valid = validatePosition(ic.modifiedRange.getStartPosition(), modifiedLines) && validatePosition(ic.modifiedRange.getEndPosition(), modifiedLines) &&
+                        validatePosition(ic.originalRange.getStartPosition(), originalLines) && validatePosition(ic.originalRange.getEndPosition(), originalLines);
+                    if (!valid) {
+                        return false;
+                    }
+                }
+                if (!validateRange(c.modifiedRange, modifiedLines) || !validateRange(c.originalRange, originalLines)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+        return new LinesDiff(changes, moves, hitTimeout);
     }
     refineDiff(originalLines, modifiedLines, diff, timeout, considerWhitespaceChanges) {
-        const sourceSlice = new Slice(originalLines, diff.seq1Range, considerWhitespaceChanges);
-        const targetSlice = new Slice(modifiedLines, diff.seq2Range, considerWhitespaceChanges);
-        const diffResult = sourceSlice.length + targetSlice.length < 500
-            ? this.dynamicProgrammingDiffing.compute(sourceSlice, targetSlice, timeout)
-            : this.myersDiffingAlgorithm.compute(sourceSlice, targetSlice, timeout);
+        const slice1 = new LinesSliceCharSequence(originalLines, diff.seq1Range, considerWhitespaceChanges);
+        const slice2 = new LinesSliceCharSequence(modifiedLines, diff.seq2Range, considerWhitespaceChanges);
+        const diffResult = slice1.length + slice2.length < 500
+            ? this.dynamicProgrammingDiffing.compute(slice1, slice2, timeout)
+            : this.myersDiffingAlgorithm.compute(slice1, slice2, timeout);
         let diffs = diffResult.diffs;
-        diffs = optimizeSequenceDiffs(sourceSlice, targetSlice, diffs);
-        diffs = coverFullWords(sourceSlice, targetSlice, diffs);
-        diffs = smoothenSequenceDiffs(sourceSlice, targetSlice, diffs);
-        const result = diffs.map((d) => new RangeMapping(sourceSlice.translateRange(d.seq1Range), targetSlice.translateRange(d.seq2Range)));
+        diffs = optimizeSequenceDiffs(slice1, slice2, diffs);
+        diffs = coverFullWords(slice1, slice2, diffs);
+        diffs = smoothenSequenceDiffs(slice1, slice2, diffs);
+        diffs = removeRandomMatches(slice1, slice2, diffs);
+        const result = diffs.map((d) => new RangeMapping(slice1.translateRange(d.seq1Range), slice2.translateRange(d.seq2Range)));
         // Assert: result applied on original should be the same as diff applied to original
         return {
             mappings: result,
@@ -14055,7 +14388,7 @@ function mergeSequenceDiffs(sequenceDiffs1, sequenceDiffs2) {
     }
     return result;
 }
-function lineRangeMappingFromRangeMappings(alignments, originalLines, modifiedLines) {
+function lineRangeMappingFromRangeMappings(alignments, originalLines, modifiedLines, dontAssertStartLine = false) {
     const changes = [];
     for (const g of group(alignments.map(a => getLineRangeMapping(a, originalLines, modifiedLines)), (a1, a2) => a1.originalRange.overlapOrTouch(a2.originalRange)
         || a1.modifiedRange.overlapOrTouch(a2.modifiedRange))) {
@@ -14064,6 +14397,11 @@ function lineRangeMappingFromRangeMappings(alignments, originalLines, modifiedLi
         changes.push(new LineRangeMapping(first.originalRange.join(last.originalRange), first.modifiedRange.join(last.modifiedRange), g.map(a => a.innerChanges[0])));
     }
     assertFn(() => {
+        if (!dontAssertStartLine) {
+            if (changes.length > 0 && changes[0].originalRange.startLineNumber !== changes[0].modifiedRange.startLineNumber) {
+                return false;
+            }
+        }
         return checkAdjacentItems(changes, (m1, m2) => m2.originalRange.startLineNumber - m1.originalRange.endLineNumberExclusive === m2.modifiedRange.startLineNumber - m1.modifiedRange.endLineNumberExclusive &&
             // There has to be an unchanged line in between (otherwise both diffs should have been joined)
             m1.originalRange.endLineNumberExclusive < m2.originalRange.startLineNumber &&
@@ -14075,18 +14413,22 @@ function getLineRangeMapping(rangeMapping, originalLines, modifiedLines) {
     let lineStartDelta = 0;
     let lineEndDelta = 0;
     // rangeMapping describes the edit that replaces `rangeMapping.originalRange` with `newText := getText(modifiedLines, rangeMapping.modifiedRange)`.
-    // original: xxx[ \n <- this line is not modified
-    // modified: xxx[ \n
-    if (rangeMapping.modifiedRange.startColumn - 1 >= modifiedLines[rangeMapping.modifiedRange.startLineNumber - 1].length
-        && rangeMapping.originalRange.startColumn - 1 >= originalLines[rangeMapping.originalRange.startLineNumber - 1].length) {
-        lineStartDelta = 1; // +1 is always possible, as startLineNumber < endLineNumber + 1
-    }
     // original: ]xxx \n <- this line is not modified
     // modified: ]xx  \n
     if (rangeMapping.modifiedRange.endColumn === 1 && rangeMapping.originalRange.endColumn === 1
         && rangeMapping.originalRange.startLineNumber + lineStartDelta <= rangeMapping.originalRange.endLineNumber
         && rangeMapping.modifiedRange.startLineNumber + lineStartDelta <= rangeMapping.modifiedRange.endLineNumber) {
-        lineEndDelta = -1; // We can only do this if the range is not empty yet
+        // We can only do this if the range is not empty yet
+        lineEndDelta = -1;
+    }
+    // original: xxx[ \n <- this line is not modified
+    // modified: xxx[ \n
+    if (rangeMapping.modifiedRange.startColumn - 1 >= modifiedLines[rangeMapping.modifiedRange.startLineNumber - 1].length
+        && rangeMapping.originalRange.startColumn - 1 >= originalLines[rangeMapping.originalRange.startLineNumber - 1].length
+        && rangeMapping.originalRange.startLineNumber <= rangeMapping.originalRange.endLineNumber + lineEndDelta
+        && rangeMapping.modifiedRange.startLineNumber <= rangeMapping.modifiedRange.endLineNumber + lineEndDelta) {
+        // We can only do this if the range is not empty yet
+        lineStartDelta = 1;
     }
     const originalLineRange = new LineRange(rangeMapping.originalRange.startLineNumber + lineStartDelta, rangeMapping.originalRange.endLineNumber + 1 + lineEndDelta);
     const modifiedLineRange = new LineRange(rangeMapping.modifiedRange.startLineNumber + lineStartDelta, rangeMapping.modifiedRange.endLineNumber + 1 + lineEndDelta);
@@ -14135,7 +14477,7 @@ function getIndentation(str) {
     }
     return i;
 }
-class Slice {
+class LinesSliceCharSequence {
     constructor(lines, lineRange, considerWhitespaceChanges) {
         // This slice has to have lineRange.length many \n! (otherwise diffing against an empty slice will be problematic)
         // (Unless it covers the entire document, in that case the other slice also has to cover the entire document ands it's okay)
@@ -14182,7 +14524,10 @@ class Slice {
         return `Slice: "${this.text}"`;
     }
     get text() {
-        return [...this.elements].map(e => String.fromCharCode(e)).join('');
+        return this.getText(new OffsetRange(0, this.length));
+    }
+    getText(range) {
+        return this.elements.slice(range.start, range.endExclusive).map(e => String.fromCharCode(e)).join('');
     }
     getElement(offset) {
         return this.elements[offset];
@@ -14226,8 +14571,8 @@ class Slice {
                 i = k + 1;
             }
         }
-        const offsetOfPrevLineBreak = i === 0 ? 0 : this.firstCharOffsetByLineMinusOne[i - 1];
-        return new position_Position(this.lineRange.start + i + 1, offset - offsetOfPrevLineBreak + 1 + this.offsetByLine[i]);
+        const offsetOfFirstCharInLine = i === 0 ? 0 : this.firstCharOffsetByLineMinusOne[i - 1];
+        return new position_Position(this.lineRange.start + i + 1, offset - offsetOfFirstCharInLine + 1 + this.offsetByLine[i]);
     }
     translateRange(range) {
         return range_Range.fromPositions(this.translateOffset(range.start), this.translateOffset(range.endExclusive));
@@ -14253,6 +14598,9 @@ class Slice {
             end++;
         }
         return new OffsetRange(start, end);
+    }
+    countLinesIn(range) {
+        return this.translateOffset(range.endExclusive).lineNumber - this.translateOffset(range.start).lineNumber;
     }
 }
 function isWordChar(charCode) {
@@ -14302,8 +14650,47 @@ function getCategory(charCode) {
 function isSpace(charCode) {
     return charCode === 32 /* CharCode.Space */ || charCode === 9 /* CharCode.Tab */;
 }
+const chrKeys = new Map();
+function getKey(chr) {
+    let key = chrKeys.get(chr);
+    if (key === undefined) {
+        key = chrKeys.size;
+        chrKeys.set(chr, key);
+    }
+    return key;
+}
+class LineRangeFragment {
+    constructor(range, lines) {
+        this.range = range;
+        this.lines = lines;
+        this.histogram = [];
+        let counter = 0;
+        for (let i = range.startLineNumber - 1; i < range.endLineNumberExclusive - 1; i++) {
+            const line = lines[i];
+            for (let j = 0; j < line.length; j++) {
+                counter++;
+                const chr = line[j];
+                const key = getKey(chr);
+                this.histogram[key] = (this.histogram[key] || 0) + 1;
+            }
+            counter++;
+            const key = getKey('\n');
+            this.histogram[key] = (this.histogram[key] || 0) + 1;
+        }
+        this.totalCount = counter;
+    }
+    computeSimilarity(other) {
+        var _a, _b;
+        let sumDifferences = 0;
+        const maxLength = Math.max(this.histogram.length, other.histogram.length);
+        for (let i = 0; i < maxLength; i++) {
+            sumDifferences += Math.abs(((_a = this.histogram[i]) !== null && _a !== void 0 ? _a : 0) - ((_b = other.histogram[i]) !== null && _b !== void 0 ? _b : 0));
+        }
+        return 1 - (sumDifferences / (this.totalCount + other.totalCount));
+    }
+}
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/diff/linesDiffComputers.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/diff/linesDiffComputers.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14311,11 +14698,11 @@ function isSpace(charCode) {
 
 
 const linesDiffComputers = {
-    legacy: new SmartLinesDiffComputer(),
-    advanced: new StandardLinesDiffComputer(),
+    getLegacy: () => new SmartLinesDiffComputer(),
+    getAdvanced: () => new StandardLinesDiffComputer(),
 };
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/base/common/color.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/base/common/color.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14779,7 +15166,7 @@ Color.transparent = new Color(new RGBA(0, 0, 0, 0));
     })(Format = Color.Format || (Color.Format = {}));
 })(Color || (Color = {}));
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/languages/defaultDocumentColorsComputer.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/languages/defaultDocumentColorsComputer.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14867,7 +15254,7 @@ function _findMatches(model, regex) {
 function computeColors(model) {
     const result = [];
     // Early validation for RGB and HSL
-    const initialValidationRegex = /\b(rgb|rgba|hsl|hsla)(\([0-9\s,.\%]*\))|(#)([A-Fa-f0-9]{6})\b|(#)([A-Fa-f0-9]{8})\b/gm;
+    const initialValidationRegex = /\b(rgb|rgba|hsl|hsla)(\([0-9\s,.\%]*\))|(#)([A-Fa-f0-9]{3})\b|(#)([A-Fa-f0-9]{4})\b|(#)([A-Fa-f0-9]{6})\b|(#)([A-Fa-f0-9]{8})\b/gm;
     const initialValidationMatches = _findMatches(model, initialValidationRegex);
     // Potential colors have been found, validate the parameters
     if (initialValidationMatches.length > 0) {
@@ -14916,7 +15303,7 @@ function computeDefaultDocumentColors(model) {
     return computeColors(model);
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15186,15 +15573,13 @@ class EditorSimpleWorker {
         });
     }
     static computeDiff(originalTextModel, modifiedTextModel, options, algorithm) {
-        const diffAlgorithm = algorithm === 'advanced' ? linesDiffComputers.advanced : linesDiffComputers.legacy;
+        const diffAlgorithm = algorithm === 'advanced' ? linesDiffComputers.getAdvanced() : linesDiffComputers.getLegacy();
         const originalLines = originalTextModel.getLinesContent();
         const modifiedLines = modifiedTextModel.getLinesContent();
         const result = diffAlgorithm.computeDiff(originalLines, modifiedLines, options);
         const identical = (result.changes.length > 0 ? false : this._modelsAreIdentical(originalTextModel, modifiedTextModel));
-        return {
-            identical,
-            quitEarly: result.hitTimeout,
-            changes: result.changes.map(m => {
+        function getLineChanges(changes) {
+            return changes.map(m => {
                 var _a;
                 return ([m.originalRange.startLineNumber, m.originalRange.endLineNumberExclusive, m.modifiedRange.startLineNumber, m.modifiedRange.endLineNumberExclusive, (_a = m.innerChanges) === null || _a === void 0 ? void 0 : _a.map(m => [
                         m.originalRange.startLineNumber,
@@ -15206,7 +15591,19 @@ class EditorSimpleWorker {
                         m.modifiedRange.endLineNumber,
                         m.modifiedRange.endColumn,
                     ])]);
-            })
+            });
+        }
+        return {
+            identical,
+            quitEarly: result.hitTimeout,
+            changes: getLineChanges(result.changes),
+            moves: result.moves.map(m => ([
+                m.lineRangeMapping.original.startLineNumber,
+                m.lineRangeMapping.original.endLineNumberExclusive,
+                m.lineRangeMapping.modified.startLineNumber,
+                m.lineRangeMapping.modified.endLineNumberExclusive,
+                getLineChanges(m.changes)
+            ])),
         };
     }
     static _modelsAreIdentical(original, modified) {
@@ -15303,7 +15700,7 @@ class EditorSimpleWorker {
     }
     textualSuggest(modelUrls, leadingWord, wordDef, wordDefFlags) {
         return editorSimpleWorker_awaiter(this, void 0, void 0, function* () {
-            const sw = new StopWatch(true);
+            const sw = new StopWatch();
             const wordDefRegExp = new RegExp(wordDef, wordDefFlags);
             const seen = new Set();
             outer: for (const url of modelUrls) {
@@ -15443,7 +15840,7 @@ if (typeof importScripts === 'function') {
     globalThis.monaco = createMonacoBaseAPI();
 }
 
-;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.39.0/node_modules/monaco-editor/esm/vs/editor/editor.worker.js
+;// CONCATENATED MODULE: ./node_modules/.pnpm/monaco-editor@0.41.0/node_modules/monaco-editor/esm/vs/editor/editor.worker.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
