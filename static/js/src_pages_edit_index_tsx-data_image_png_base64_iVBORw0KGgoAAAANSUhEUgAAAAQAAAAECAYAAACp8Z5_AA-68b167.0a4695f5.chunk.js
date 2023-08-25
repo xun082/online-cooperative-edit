@@ -126,7 +126,7 @@ let ActionTypeEnum = /*#__PURE__*/function (ActionTypeEnum) {
   ActionTypeEnum["Rename"] = "Rename";
   return ActionTypeEnum;
 }({});
-const ActionTypeEnumMap = new Map([[ActionTypeEnum.Rename, "重命名"]]);
+const ActionTypeEnumMap = new Map([[ActionTypeEnum.Rename, "重命名"], [ActionTypeEnum.Del, "删除文件"]]);
 // EXTERNAL MODULE: ./src/utils/file.ts
 var file = __webpack_require__(81897);
 ;// CONCATENATED MODULE: ./src/utils/webContainer.ts
@@ -218,7 +218,11 @@ async function saveFileSystemTree(webcontainerInstance) {
 ;// CONCATENATED MODULE: ./src/hooks/useMemoSelectedNode.tsx
 
 
-function useMemoSelectedNode(selectedKey, treeData) {
+
+function useMemoSelectedNode(treeData) {
+  const {
+    selectedKey
+  } = (0,store/* useAppSelector */.CG)(state => state.code);
   const selectedNode = (0,react.useMemo)(() => (0,file/* findNodeByKey */.f1)(selectedKey, treeData), [treeData, file/* findNodeByKey */.f1, selectedKey]);
   return selectedNode;
 }
@@ -254,12 +258,20 @@ const FileEditorModal = () => {
   } = (0,react.useContext)(tree_data);
   const webcontainerInstance = (0,react.useContext)(webContainer);
   const dispatch = (0,store/* useAppDispatch */.TL)();
-  const selectedNode = useMemoSelectedNode(selectedKey, treeData);
+  const selectedNode = useMemoSelectedNode(treeData);
   const handleOk = async () => {
     const path = (0,file/* getNodePath */.F6)(selectedKey, treeData);
-    renameFile(path, formatPath, webcontainerInstance);
-    selectedNode.title = formatPath;
-    setTreeData(pre => [...pre]);
+    console.log("🚀 ~ file: index.tsx:32 ~ handleOk ~ path:", path);
+    if (fileControlType === ActionTypeEnum.Rename) {
+      renameFile(path, formatPath, webcontainerInstance);
+      selectedNode.title = formatPath;
+      setTreeData(pre => [...pre]);
+    }
+    if (fileControlType === ActionTypeEnum.Del) {
+      rm(path, webcontainerInstance);
+      const result = await readFileSystem(webcontainerInstance);
+      setTreeData(result);
+    }
     dispatch((0,code/* changeFileModalStatus */.zk)({
       open: false
     }));
@@ -277,7 +289,7 @@ const FileEditorModal = () => {
     open: fileModalIsOpen,
     onOk: handleOk,
     onCancel: handleCancel
-  }, /*#__PURE__*/react.createElement(input/* default */.Z, {
+  }, fileControlType === ActionTypeEnum.Del ? /*#__PURE__*/react.createElement("div", null, formatPath) : /*#__PURE__*/react.createElement(input/* default */.Z, {
     placeholder: "Basic usage",
     value: formatPath,
     onChange: handleInputChange
@@ -344,6 +356,15 @@ const Collapse = () => {
     }
     sync();
   }, [webcontainerInstance]);
+  const selectedNode = useMemoSelectedNode(treeData);
+  (0,react.useEffect)(() => {
+    if (selectedNode) {
+      const path = (0,file/* getNodePath */.F6)(selectedNode.key, treeData);
+      dispatch((0,code/* changePath */.YY)(path));
+    } else {
+      dispatch((0,code/* changePath */.YY)(""));
+    }
+  }, [selectedNode]);
 
   // 添加文件
   const addFileHandle = e => {
@@ -356,15 +377,6 @@ const Collapse = () => {
     e.stopPropagation();
     console.log(222);
   };
-  const selectedNode = useMemoSelectedNode(selectedKey, treeData);
-  (0,react.useEffect)(() => {
-    if (selectedNode?.isLeaf) {
-      const path = (0,file/* getNodePath */.F6)(selectedNode.key, treeData);
-      dispatch((0,code/* changePath */.YY)(path));
-    } else {
-      dispatch((0,code/* changePath */.YY)(""));
-    }
-  }, [selectedNode]);
   const generateTreeNodes = data => {
     return data.map(node => {
       const newNode = {
@@ -402,7 +414,11 @@ const Collapse = () => {
     }), /*#__PURE__*/react.createElement("img", {
       className: collapse_index_module["file-edit-icon"],
       src: deleteFile_namespaceObject,
-      alt: ""
+      alt: "",
+      onClick: () => dispatch((0,code/* changeFileModalStatus */.zk)({
+        open: true,
+        type: ActionTypeEnum.Del
+      }))
     })));
   };
   return /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("div", {
@@ -679,6 +695,7 @@ function TerminalPanel() {
       if (webcontainerInstance !== null) {
         if (terminalRef.current && !terminal) {
           terminal = new xterm.Terminal({
+            fontFamily: '"Cascadia Code", Menlo, monospace',
             convertEol: true,
             cursorBlink: true,
             tabStopWidth: 2
@@ -693,15 +710,13 @@ function TerminalPanel() {
               rows: terminal.rows
             }
           });
-          const handleResize = () => {
+          window.addEventListener("resize", () => {
             fitAddon.fit();
             shell?.resize({
               cols: terminal.cols,
               rows: terminal.rows
             });
-          };
-          handleResize();
-          window.addEventListener("resize", handleResize);
+          });
           shell?.output.pipeTo(new WritableStream({
             write(data) {
               terminal.write(data);
@@ -716,9 +731,6 @@ function TerminalPanel() {
     }
     init();
   }, [webcontainerInstance]);
-  webcontainerInstance?.on("server-ready", (port, host) => {
-    console.log(port, host);
-  });
   return /*#__PURE__*/react.createElement("div", {
     className: terminal_index_module["root"],
     ref: terminalRef

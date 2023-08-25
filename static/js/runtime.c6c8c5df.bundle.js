@@ -141,7 +141,7 @@
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "static/js/" + chunkId + "." + {"src_pages_home_index_tsx":"43f1b8aa","src_pages_edit_index_tsx-data_image_png_base64_iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5_AA-68b167":"8a0dfb65"}[chunkId] + ".chunk.js";
+/******/ 			return "static/js/" + chunkId + "." + {"src_pages_home_index_tsx":"43f1b8aa","src_pages_edit_index_tsx-data_image_png_base64_iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5_AA-68b167":"0a4695f5"}[chunkId] + ".chunk.js";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -150,7 +150,7 @@
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return "static/css/" + chunkId + "." + {"src_pages_home_index_tsx":"891aee258cf9371b160a","src_pages_edit_index_tsx-data_image_png_base64_iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5_AA-68b167":"c4783686c08b25024d78"}[chunkId] + ".css";
+/******/ 			return "static/css/" + chunkId + "." + {"src_pages_home_index_tsx":"891aee258cf9371b160a","src_pages_edit_index_tsx-data_image_png_base64_iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5_AA-68b167":"e15fa596eb5a8243b37d"}[chunkId] + ".css";
 /******/ 		};
 /******/ 	}();
 /******/ 	
