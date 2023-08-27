@@ -14,10 +14,10 @@
 /* harmony export */   aU: function() { return /* binding */ Action; },
 /* harmony export */   cP: function() { return /* binding */ parsePath; },
 /* harmony export */   fp: function() { return /* binding */ matchRoutes; },
-/* harmony export */   lX: function() { return /* binding */ createBrowserHistory; },
-/* harmony export */   pC: function() { return /* binding */ resolveTo; }
+/* harmony export */   pC: function() { return /* binding */ resolveTo; },
+/* harmony export */   q_: function() { return /* binding */ createHashHistory; }
 /* harmony export */ });
-/* unused harmony exports ErrorResponse, IDLE_BLOCKER, IDLE_FETCHER, IDLE_NAVIGATION, UNSAFE_DEFERRED_SYMBOL, UNSAFE_DeferredData, UNSAFE_convertRoutesToDataRoutes, UNSAFE_warning, createHashHistory, createMemoryHistory, createPath, createRouter, createStaticHandler, defer, generatePath, getStaticContextFromError, getToPathname, isDeferredData, json, matchPath, normalizePathname, redirect, redirectDocument, resolvePath */
+/* unused harmony exports ErrorResponse, IDLE_BLOCKER, IDLE_FETCHER, IDLE_NAVIGATION, UNSAFE_DEFERRED_SYMBOL, UNSAFE_DeferredData, UNSAFE_convertRoutesToDataRoutes, UNSAFE_warning, createBrowserHistory, createMemoryHistory, createPath, createRouter, createStaticHandler, defer, generatePath, getStaticContextFromError, getToPathname, isDeferredData, json, matchPath, normalizePathname, redirect, redirectDocument, resolvePath */
 /**
  * @remix-run/router v1.8.0
  *

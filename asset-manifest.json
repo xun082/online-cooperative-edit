@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "auto/static/css/main.115cd4bcd57573e61f50.css",
-    "main.js": "auto/static/js/main.d51b6534.bundle.js",
+    "main.js": "auto/static/js/main.1914e0a4.bundle.js",
     "runtime.js": "auto/static/js/runtime.a8ccf87d.bundle.js",
     "static/css/src_pages_home_index_tsx.css": "auto/static/css/src_pages_home_index_tsx.891aee258cf9371b160a.css",
     "static/js/src_pages_home_index_tsx.301e66fc.chunk.js": "auto/static/js/src_pages_home_index_tsx.301e66fc.chunk.js",
@@ -18,11 +18,11 @@
     "vendors-47c4c770.js": "auto/static/js/vendors-47c4c770.33915b9e.bundle.js",
     "vendors-8162d906.js": "auto/static/js/vendors-8162d906.3aa35152.bundle.js",
     "vendors-7972c76f.js": "auto/static/js/vendors-7972c76f.0024725b.bundle.js",
-    "vendors-a2cf4820.js": "auto/static/js/vendors-a2cf4820.51ff5d27.bundle.js",
+    "vendors-a2cf4820.js": "auto/static/js/vendors-a2cf4820.5d4a9d17.bundle.js",
     "vendors-be5e06f6.js": "auto/static/js/vendors-be5e06f6.9d4f6529.bundle.js",
     "vendors-e09463db.js": "auto/static/js/vendors-e09463db.63435768.bundle.js",
     "vendors-b965f189.js": "auto/static/js/vendors-b965f189.29c62888.bundle.js",
-    "vendors-39f4d2e5.js": "auto/static/js/vendors-39f4d2e5.aab860fc.bundle.js",
+    "vendors-39f4d2e5.js": "auto/static/js/vendors-39f4d2e5.c3ad479d.bundle.js",
     "vendors-4c3bcec0.js": "auto/static/js/vendors-4c3bcec0.13f19538.bundle.js",
     "vendors-9ebd23ae.js": "auto/static/js/vendors-9ebd23ae.87ae620a.bundle.js",
     "ts.worker.js": "auto/ts.worker.js",
@@ -45,15 +45,15 @@
     "static/js/vendors-47c4c770.33915b9e.bundle.js",
     "static/js/vendors-8162d906.3aa35152.bundle.js",
     "static/js/vendors-7972c76f.0024725b.bundle.js",
-    "static/js/vendors-a2cf4820.51ff5d27.bundle.js",
+    "static/js/vendors-a2cf4820.5d4a9d17.bundle.js",
     "static/js/vendors-be5e06f6.9d4f6529.bundle.js",
     "static/js/vendors-e09463db.63435768.bundle.js",
     "static/js/vendors-b965f189.29c62888.bundle.js",
-    "static/js/vendors-39f4d2e5.aab860fc.bundle.js",
+    "static/js/vendors-39f4d2e5.c3ad479d.bundle.js",
     "static/js/vendors-4c3bcec0.13f19538.bundle.js",
     "static/js/vendors-9ebd23ae.87ae620a.bundle.js",
     "static/js/vendors-3cf3293a_vendors.js",
     "static/css/main.115cd4bcd57573e61f50.css",
-    "static/js/main.d51b6534.bundle.js"
+    "static/js/main.1914e0a4.bundle.js"
   ]
 }

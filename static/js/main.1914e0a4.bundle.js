@@ -139,7 +139,7 @@ var update = injectStylesIntoStyleTag_default()(styles/* default */.Z, options);
 const App = () => {
   return /*#__PURE__*/react.createElement(es/* Provider */.zt, {
     store: store/* store */.h
-  }, /*#__PURE__*/react.createElement(header, null), /*#__PURE__*/react.createElement(dist/* BrowserRouter */.VK, null, /*#__PURE__*/react.createElement(react.Suspense, {
+  }, /*#__PURE__*/react.createElement(header, null), /*#__PURE__*/react.createElement(dist/* HashRouter */.UT, null, /*#__PURE__*/react.createElement(react.Suspense, {
     fallback: /*#__PURE__*/react.createElement("div", null, "\u52A0\u8F7D\u4E2D")
   }, /*#__PURE__*/react.createElement(router, null))));
 };
