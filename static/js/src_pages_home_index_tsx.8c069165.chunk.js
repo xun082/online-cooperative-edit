@@ -1,7 +1,7 @@
 "use strict";
 (self["webpackChunkedit"] = self["webpackChunkedit"] || []).push([["src_pages_home_index_tsx"],{
 
-/***/ 7753:
+/***/ 5800:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
@@ -52,70 +52,6 @@ const TemplateCard = props => {
   }), /*#__PURE__*/react.createElement("span", null, alt));
 };
 /* harmony default export */ var template_card = (TemplateCard);
-;// CONCATENATED MODULE: ./src/common/edit-title.tsx
-
-const EditorTitleObjects = [{
-  title: "HTML",
-  tag: "html",
-  index: 1,
-  svg: /*#__PURE__*/react.createElement("svg", {
-    viewBox: "0 0 15 15",
-    style: {
-      width: "17px",
-      height: "17px",
-      marginInlineEnd: "5px"
-    }
-  }, /*#__PURE__*/react.createElement("rect", {
-    fill: "#FF3C41",
-    width: "15",
-    height: "15",
-    rx: "4"
-  }), /*#__PURE__*/react.createElement("path", {
-    d: "M10.97 2.29a.563.563 0 0 0-.495-.29.572.572 0 0 0-.488.277l-5.905 9.86a.565.565 0 0 0-.007.574c.102.18.287.289.495.289a.572.572 0 0 0 .488-.277l5.905-9.86a.565.565 0 0 0 .007-.574",
-    fill: "#28282B"
-  }))
-}, {
-  title: "CSS",
-  tag: "css",
-  index: 2,
-  svg: /*#__PURE__*/react.createElement("svg", {
-    viewBox: "0 0 15 15",
-    style: {
-      width: "17px",
-      height: "17px",
-      marginInlineEnd: "5px"
-    }
-  }, /*#__PURE__*/react.createElement("rect", {
-    fill: "#0EBEFF",
-    width: "15",
-    height: "15",
-    rx: "4"
-  }), /*#__PURE__*/react.createElement("path", {
-    d: "M8 8.366l1.845 1.065a.507.507 0 0 0 .686-.181.507.507 0 0 0-.186-.685L8.5 7.5l1.845-1.065a.507.507 0 0 0 .186-.685.507.507 0 0 0-.686-.181L8 6.634v-2.13A.507.507 0 0 0 7.5 4c-.268 0-.5.225-.5.503v2.131L5.155 5.569a.507.507 0 0 0-.686.181.507.507 0 0 0 .186.685L6.5 7.5 4.655 8.565a.507.507 0 0 0-.186.685c.134.232.445.32.686.181L7 8.366v2.13c0 .271.224.504.5.504.268 0 .5-.225.5-.503V8.366z",
-    fill: "#282828"
-  }))
-}, {
-  title: "JavaScript",
-  tag: "javascript",
-  index: 3,
-  svg: /*#__PURE__*/react.createElement("svg", {
-    viewBox: "0 0 15 15",
-    style: {
-      width: "17px",
-      height: "17px",
-      marginInlineEnd: "5px"
-    }
-  }, /*#__PURE__*/react.createElement("rect", {
-    fill: "#FCD000",
-    width: "15",
-    height: "15",
-    rx: "4"
-  }), /*#__PURE__*/react.createElement("path", {
-    d: "M6.554 3.705c0 .267-.19.496-.452.543-1.2.217-2.12 1.61-2.12 3.275 0 1.665.92 3.057 2.12 3.274a.554.554 0 0 1-.205 1.087c-1.733-.322-3.022-2.175-3.022-4.361 0-2.187 1.289-4.04 3.022-4.362a.554.554 0 0 1 .657.544zm1.892 0c0-.347.316-.607.657-.544 1.733.322 3.022 2.175 3.022 4.362 0 2.186-1.289 4.04-3.022 4.361a.554.554 0 0 1-.205-1.087c1.2-.217 2.12-1.61 2.12-3.274 0-1.665-.92-3.058-2.12-3.275a.551.551 0 0 1-.452-.543z",
-    fill: "#282828"
-  }))
-}];
-/* harmony default export */ var edit_title = ((/* unused pure expression or super */ null && (EditorTitleObjects)));
 ;// CONCATENATED MODULE: ./src/assets/images/vue.png
 var vue_namespaceObject = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAA+VBMVEUAAABBuINBuINBuINBuYNBuINJuYhBt4NDuINBuINAuYNBuoUxUGFBvoM0Sl5BuINBuYNBuINAuINBuYNBuYRBuINDuIJAuIJCuoVAvYU0S15BuYRAuIJBuYI8uHxAuIM0Sl5BuYJAuIM0TV8zTVxGuYtAs4I0Sl40Sl9BuIRBuYNBt4M0TV42TWAyT2BAt4JCt4MyUWMzTWExTmI0S140TF80Sl9At4RCt4Q1UWBBuIM0SV40S19AsoE1S182YmY/p348inRAr4A8kXY2WGM8hXI+oHs9mHg5dW05cGs4aWk1VGI1UWFAqn8+nHo6fW86eG44bWo2XGRtwM6oAAAAOnRSTlMA+/np3akNiCVIwS8TD+7n07y0dm1iVzYeFLiXkmgR6+flyoY6C/vdysaedW9tRkA9KScapqGUeFlSDOFE0AAAAp1JREFUeNrs1l0vA0EUgOHTFkVXq6TxmSAE8Rmf4YyitEVbLf7/j+FCyrsxW93O3M1zO5tMMjlv9kgQBEEQBEEQBEEQBDZrGdhu3/y2fiYxUREftLczkJVhrSo9GtiUmE0DNaW8DK2kdIcLiicCW0Uc3ymNTcjQKkpPN7hiWWAZh7ddpYqkMKv0bOAID2DgTWlW0ihkFR74BLuR9EW7OOq8KmQXJJVxpZ6BQ+k7MNBTGpd0JnMKVc7hT4oRJ/CjqpBblJTm/5nipYFHpXmB0VKE7xS3bh0mSJWMwn0sxT8TvB8tQSonp3gtX46SEywLuE1xJxKJdpITLAiMmmIjnmI8wYbSnoxmZkCKp6exBJVymEAPKZ5fcAKdJEgbSu8GmOCLkwRpKjnF5ASnBDyk6DFBe4p1Y1GPJZgriBN5pZqhwXuY1xTtCZYmxJF9pa4B7GFI0Jlpe4r2BKfxAN5StCd4LA6Vbb8E+x42Jy4tDUyxbt3DPKXoP0GaKSlUWwZaHhKkK6UmJ7Bp28P8pmhPUMBPim3T14klmD0WD1bsKdaUVgU8pVit+0+Q8rbt7LP9OkZBGAiiMPyURJNCCBISLRJRsNAqnbBNwCai97+P6SSPxGaY2Wa+C2yzP7wZlBJkm0uYes8nWGygpOIU5xOsQPRSfAkTlK+zz5jgkxLMQFRTFCYoT7HvlRNkZZgaOMEHdF0pRVZAF6fI1hXUpeGPFPoy+oeiBOUpcoIWjklYkBxgogkLGkjIUyxgpQtzVh3MpPYJcooREuSDnW1hqU0CSXYw1VgnyK57Psat1dMEa5hLKUFz2fn3/imDLV5nJQxxivIE5essRyR7StBcHSdBXmd3xHM8jwm2iKikBM21t9sOUeU5nHPOOeecc845mS86+VVAN3822AAAAABJRU5ErkJggg==";
 ;// CONCATENATED MODULE: ./src/assets/images/react.png
@@ -128,15 +64,17 @@ var go_namespaceObject = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACA
 var add_namespaceObject = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMzIuNTc0NCAxNkMzMi45MzExIDE2IDMzLjA2MDQgMTYuMDM3MSAzMy4xOTA3IDE2LjEwNjlDMzMuMzIxMSAxNi4xNzY2IDMzLjQyMzQgMTYuMjc4OSAzMy40OTMxIDE2LjQwOTNDMzMuNTYyOSAxNi41Mzk2IDMzLjYgMTYuNjY4OSAzMy42IDE3LjAyNTZWMzAuNEg0Ni45NzQ0QzQ3LjMzMTEgMzAuNCA0Ny40NjA0IDMwLjQzNzEgNDcuNTkwNyAzMC41MDY5QzQ3LjcyMTEgMzAuNTc2NiA0Ny44MjM0IDMwLjY3ODkgNDcuODkzMSAzMC44MDkzQzQ3Ljk2MjkgMzAuOTM5NiA0OCAzMS4wNjg5IDQ4IDMxLjQyNTZWMzIuNTc0NEM0OCAzMi45MzExIDQ3Ljk2MjkgMzMuMDYwNCA0Ny44OTMxIDMzLjE5MDdDNDcuODIzNCAzMy4zMjExIDQ3LjcyMTEgMzMuNDIzNCA0Ny41OTA3IDMzLjQ5MzFDNDcuNDYwNCAzMy41NjI5IDQ3LjMzMTEgMzMuNiA0Ni45NzQ0IDMzLjZIMzMuNTk5MkwzMy42IDQ2Ljk3NDRDMzMuNiA0Ny4zMzExIDMzLjU2MjkgNDcuNDYwNCAzMy40OTMxIDQ3LjU5MDdDMzMuNDIzNCA0Ny43MjExIDMzLjMyMTEgNDcuODIzNCAzMy4xOTA3IDQ3Ljg5MzFDMzMuMDYwNCA0Ny45NjI5IDMyLjkzMTEgNDggMzIuNTc0NCA0OEgzMS40MjU2QzMxLjA2ODkgNDggMzAuOTM5NiA0Ny45NjI5IDMwLjgwOTMgNDcuODkzMUMzMC42Nzg5IDQ3LjgyMzQgMzAuNTc2NiA0Ny43MjExIDMwLjUwNjkgNDcuNTkwN0MzMC40MzcxIDQ3LjQ2MDQgMzAuNCA0Ny4zMzExIDMwLjQgNDYuOTc0NEwzMC4zOTkyIDMzLjU5OTJMMTcuMDI1NiAzMy42QzE2LjY2ODkgMzMuNiAxNi41Mzk2IDMzLjU2MjkgMTYuNDA5MyAzMy40OTMxQzE2LjI3ODkgMzMuNDIzNCAxNi4xNzY2IDMzLjMyMTEgMTYuMTA2OSAzMy4xOTA3QzE2LjAzNzEgMzMuMDYwNCAxNiAzMi45MzExIDE2IDMyLjU3NDRWMzEuNDI1NkMxNiAzMS4wNjg5IDE2LjAzNzEgMzAuOTM5NiAxNi4xMDY5IDMwLjgwOTNDMTYuMTc2NiAzMC42Nzg5IDE2LjI3ODkgMzAuNTc2NiAxNi40MDkzIDMwLjUwNjlDMTYuNTM5NiAzMC40MzcxIDE2LjY2ODkgMzAuNCAxNy4wMjU2IDMwLjRMMzAuNCAzMC4zOTkyVjE3LjAyNTZDMzAuNCAxNi42Njg5IDMwLjQzNzEgMTYuNTM5NiAzMC41MDY5IDE2LjQwOTNDMzAuNTc2NiAxNi4yNzg5IDMwLjY3ODkgMTYuMTc2NiAzMC44MDkzIDE2LjEwNjlDMzAuOTM5NiAxNi4wMzcxIDMxLjA2ODkgMTYgMzEuNDI1NiAxNkgzMi41NzQ0WiIgZmlsbD0iIzQ0OTVGRiIvPgo8L3N2Zz4K";
 // EXTERNAL MODULE: ./src/utils/getLocalDirectory.ts
 var getLocalDirectory = __webpack_require__(4920);
+;// CONCATENATED MODULE: ./src/assets/images/JavaScript.svg
+var JavaScript_namespaceObject = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiBmaWxsPSIjRTc5NjI3IiB2aWV3Qm94PSItNDAgLTQwIDU4NiA1ODYiIGNsYXNzPSJGaWxlTmFtZS1pY29uLWk0TTYxIj48cGF0aCBkPSJNNDEyLjIyNiAzODUuNTYzYzI4LjA2NSAzNy41MTEtNDYuODkzIDY0Ljc3LTc3LjExIDEwLjU1OWwtNDEuMDUgMjMuODIyIDIuNTE2IDQuMTY3YzE1LjQ2NCAyNi4wNCAzOS42MiA0MS4yOTQgNzIuMjcgNDUuNjczIDcxLjQ4MSA4LjU1IDExOC4xNDgtMzcuMDM0IDkyLjgxNy0xMDEuNzY3QzQ0My42NjcgMzMxIDM5Ni41IDMyNCAzNjkgMzA1Ljc1Yy0xNi4xNzItOS40MjItMTIuODA2LTI5LjM2NC4xODMtMzcuMzY1IDEwLjEwMi02LjIyMiAzMy4zMTctNy4wMSA0NS4yNzQgMTcuNzg2bDM5LjI4LTI1LjMxN0M0MjIuNzUgMjA1IDM0OS41IDIxNi4yNSAzMjcuNTQ0IDI0MS42MjcgMjk3LjY4OCAyNzYuNzAyIDMwNi4yMjggMzE1Ljg1IDMzMi41IDM0MWMyMC40MzQgMTkuNTYxIDUyLjUwMSAyNi4yMDIgNzkuNzI2IDQ0LjU2M3ptLTE4NS41ODggNzkuMDY5YzIyLjYzLTkuMTUzIDM1LjkwNC0yOC4wNzQgMzkuNDE2LTU2LjIwMi4zMDUtMi44NDguNTA4LTE4NC41OTkuNTA4LTE4NC41OTloLTQ5Ljc4OGwtLjM2IDE3OS43NzljLTEuMTY0IDExLjY0LTguMTIyIDE5Ljk4My0xOC4yODkgMjEuNjE5LTE3LjM0NyAyLjc5MS0yOC45MTEtMi4yNi00MC45NjMtMjQuODI2bC00MC41MzUgMjQuNTA4YzE3LjM3MyA0MC44MzkgNjkuNzQ1IDU1LjgzOCAxMTAuMDExIDM5Ljcyek00NC44NzMgMGg0MjIuMjU0QzQ5MS45ODcgMCA1MTIgMjAuMDEzIDUxMiA0NC44NzN2NDIyLjI1NGMwIDI0Ljg2LTIwLjAxMyA0NC44NzMtNDQuODczIDQ0Ljg3M0g0NC44NzNDMjAuMDEzIDUxMiAwIDQ5MS45ODcgMCA0NjcuMTI3VjQ0Ljg3M0MwIDIwLjAxMyAyMC4wMTMgMCA0NC44NzMgMHoiPjwvcGF0aD48L3N2Zz4=";
 ;// CONCATENATED MODULE: ./src/common/index.ts
-
-
 // 模板
 
 
 
 
 
+
+// 文件图标
 
 const Template = [{
   src: add_namespaceObject,
@@ -170,33 +108,7 @@ const Template = [{
     return true;
   }
 }];
-
-const data = [{
-  isFolder: true,
-  name: "public",
-  children: [{
-    isFolder: false,
-    name: "index.html"
-  }]
-}, {
-  isFolder: true,
-  name: "src",
-  children: [{
-    isFolder: true,
-    name: "components",
-    children: [{
-      isFolder: true,
-      name: "home",
-      children: [{
-        isFolder: false,
-        name: "Home.js"
-      }]
-    }]
-  }, {
-    isFolder: false,
-    name: "App.js"
-  }]
-}];
+const fileTypeIconMap = new Map([["js", JavaScript_namespaceObject], ["ts", JavaScript_namespaceObject], ["jsx", JavaScript_namespaceObject], ["tsx", JavaScript_namespaceObject]]);
 ;// CONCATENATED MODULE: ./src/pages/home/index.tsx
 
 

@@ -67,7 +67,7 @@ var react_router_dist = __webpack_require__(4430);
 ;// CONCATENATED MODULE: ./src/router/index.tsx
 
 
-const Home = /*#__PURE__*/(0,react.lazy)(() => __webpack_require__.e(/* import() */ "src_pages_home_index_tsx").then(__webpack_require__.bind(__webpack_require__, 7753)));
+const Home = /*#__PURE__*/(0,react.lazy)(() => __webpack_require__.e(/* import() */ "src_pages_home_index_tsx").then(__webpack_require__.bind(__webpack_require__, 5800)));
 const Edit = /*#__PURE__*/(0,react.lazy)(() => Promise.all(/* import() */[__webpack_require__.e("vendors-6ef37c4b"), __webpack_require__.e("vendors-e74d93d6"), __webpack_require__.e("vendors-cd0597eb"), __webpack_require__.e("vendors-6575d636"), __webpack_require__.e("vendors-5603c60f"), __webpack_require__.e("vendors-5de78aca"), __webpack_require__.e("vendors-acde0842"), __webpack_require__.e("vendors-47c4c770"), __webpack_require__.e("vendors-8162d906"), __webpack_require__.e("vendors-7972c76f"), __webpack_require__.e("vendors-a2cf4820"), __webpack_require__.e("vendors-be5e06f6"), __webpack_require__.e("vendors-e09463db"), __webpack_require__.e("vendors-b965f189"), __webpack_require__.e("vendors-39f4d2e5"), __webpack_require__.e("vendors-4c3bcec0"), __webpack_require__.e("vendors-9ebd23ae"), __webpack_require__.e("vendors-3cf3293a"), __webpack_require__.e("src_pages_edit_index_tsx")]).then(__webpack_require__.bind(__webpack_require__, 8151)));
 const RouterConfig = () => {
   return (0,react_router_dist/* useRoutes */.V$)([{
@@ -139,7 +139,7 @@ var update = injectStylesIntoStyleTag_default()(styles/* default */.Z, options);
 const App = () => {
   return /*#__PURE__*/react.createElement(es/* Provider */.zt, {
     store: store/* store */.h
-  }, /*#__PURE__*/react.createElement(header, null), /*#__PURE__*/react.createElement(dist/* HashRouter */.UT, null, /*#__PURE__*/react.createElement(react.Suspense, {
+  }, /*#__PURE__*/react.createElement(header, null), /*#__PURE__*/react.createElement(dist/* BrowserRouter */.VK, null, /*#__PURE__*/react.createElement(react.Suspense, {
     fallback: /*#__PURE__*/react.createElement("div", null, "\u52A0\u8F7D\u4E2D")
   }, /*#__PURE__*/react.createElement(router, null))));
 };

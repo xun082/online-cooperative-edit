@@ -6,9 +6,9 @@
 
 var react__WEBPACK_IMPORTED_MODULE_0___namespace_cache;
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UT: function() { return /* binding */ HashRouter; }
+/* harmony export */   VK: function() { return /* binding */ BrowserRouter; }
 /* harmony export */ });
-/* unused harmony exports BrowserRouter, Form, Link, NavLink, ScrollRestoration, UNSAFE_useScrollRestoration, createBrowserRouter, createHashRouter, createSearchParams, unstable_HistoryRouter, unstable_usePrompt, useBeforeUnload, useFetcher, useFetchers, useFormAction, useLinkClickHandler, useSearchParams, useSubmit */
+/* unused harmony exports Form, HashRouter, Link, NavLink, ScrollRestoration, UNSAFE_useScrollRestoration, createBrowserRouter, createHashRouter, createSearchParams, unstable_HistoryRouter, unstable_usePrompt, useBeforeUnload, useFetcher, useFetchers, useFormAction, useLinkClickHandler, useSearchParams, useSubmit */
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(959);
 /* harmony import */ var react_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4430);
 /* harmony import */ var _remix_run_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2554);
@@ -337,26 +337,26 @@ function BrowserRouter(_ref) {
     future,
     window
   } = _ref;
-  let historyRef = React.useRef();
+  let historyRef = react__WEBPACK_IMPORTED_MODULE_0__.useRef();
   if (historyRef.current == null) {
-    historyRef.current = createBrowserHistory({
+    historyRef.current = (0,_remix_run_router__WEBPACK_IMPORTED_MODULE_1__/* .createBrowserHistory */ .lX)({
       window,
       v5Compat: true
     });
   }
   let history = historyRef.current;
-  let [state, setStateImpl] = React.useState({
+  let [state, setStateImpl] = react__WEBPACK_IMPORTED_MODULE_0__.useState({
     action: history.action,
     location: history.location
   });
   let {
     v7_startTransition
   } = future || {};
-  let setState = React.useCallback(newState => {
+  let setState = react__WEBPACK_IMPORTED_MODULE_0__.useCallback(newState => {
     v7_startTransition && startTransitionImpl ? startTransitionImpl(() => setStateImpl(newState)) : setStateImpl(newState);
   }, [setStateImpl, v7_startTransition]);
-  React.useLayoutEffect(() => history.listen(setState), [history, setState]);
-  return /*#__PURE__*/React.createElement(Router, {
+  react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect(() => history.listen(setState), [history, setState]);
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router__WEBPACK_IMPORTED_MODULE_2__/* .Router */ .F0, {
     basename: basename,
     children: children,
     location: state.location,
@@ -375,26 +375,26 @@ function HashRouter(_ref2) {
     future,
     window
   } = _ref2;
-  let historyRef = react__WEBPACK_IMPORTED_MODULE_0__.useRef();
+  let historyRef = React.useRef();
   if (historyRef.current == null) {
-    historyRef.current = (0,_remix_run_router__WEBPACK_IMPORTED_MODULE_1__/* .createHashHistory */ .q_)({
+    historyRef.current = createHashHistory({
       window,
       v5Compat: true
     });
   }
   let history = historyRef.current;
-  let [state, setStateImpl] = react__WEBPACK_IMPORTED_MODULE_0__.useState({
+  let [state, setStateImpl] = React.useState({
     action: history.action,
     location: history.location
   });
   let {
     v7_startTransition
   } = future || {};
-  let setState = react__WEBPACK_IMPORTED_MODULE_0__.useCallback(newState => {
+  let setState = React.useCallback(newState => {
     v7_startTransition && startTransitionImpl ? startTransitionImpl(() => setStateImpl(newState)) : setStateImpl(newState);
   }, [setStateImpl, v7_startTransition]);
-  react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect(() => history.listen(setState), [history, setState]);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router__WEBPACK_IMPORTED_MODULE_2__/* .Router */ .F0, {
+  React.useLayoutEffect(() => history.listen(setState), [history, setState]);
+  return /*#__PURE__*/React.createElement(Router, {
     basename: basename,
     children: children,
     location: state.location,
